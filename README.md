@@ -1,6 +1,6 @@
 Klondike Solitaire implemented as a single-page web app. No backend. Offline-capable. Desktop and mobile friendly.
 
-> Live demo: enable GitHub Pages on branch `main`, root `/`. The URL will be `https://jonv11.github.io/jonv11-solitaire-onepager/`.
+> Live demo: [https://jonv11.github.io/jonv11-solitaire-onepager/](https://jonv11.github.io/jonv11-solitaire-onepager/)
 
 ---
 

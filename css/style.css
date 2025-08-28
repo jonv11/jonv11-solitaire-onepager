@@ -1,0 +1,166 @@
+
+/* jonv11-solitaire-onepager - css/style.css
+   Visual target: classic Klondike on green felt. Mobile-friendly.
+   HTML contract: piles with ids/#classes per index.html. Cards created by JS.
+*/
+
+:root{
+  /* Layout */
+  --gap: 12px;
+  --card-w: 140px;              /* ~2.5x3.5in aspect */
+  --card-h: 196px;
+  --radius: 10px;
+  --line: 2px;
+
+  /* Overlaps */
+  --tab-overlap: 28px;          /* vertical fan for tableau */
+  --waste-overlap: 18px;        /* horizontal fan for waste */
+
+  /* Colors */
+  --felt-1:#0f6d30;
+  --felt-2:#0c5b2a;
+  --felt-3:#0a4d24;
+  --outline:#6ac68c;
+  --pile-border: rgba(255,255,255,.35);
+  --pile-empty: rgba(255,255,255,.14);
+  --shadow: rgba(0,0,0,.25);
+  --card-front:#ffffff;
+  --card-edge:#e6e6e6;
+  --card-face:#fdfdfd;
+  --red:#d22;
+  --black:#111;
+  --hint:#ffcc00;
+}
+
+/* ===== Base ===== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font:400 16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.06), transparent 35%),
+    radial-gradient(circle at 70% 80%, rgba(0,0,0,.15), transparent 40%),
+    radial-gradient(1200px 800px at 50% 100%, var(--felt-1), var(--felt-2) 60%, var(--felt-3) 100%);
+  background-color: var(--felt-2);
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+header, footer{padding:8px 12px}
+h1{margin:0;font-size:20px;font-weight:600}
+
+/* ===== Board layout ===== */
+.game{display:grid; gap:var(--gap); padding:var(--gap); max-width:1200px; margin:0 auto}
+.stock-row{
+  display:grid;
+  grid-template-columns: var(--card-w) 1fr var(--card-w) auto;
+  gap:var(--gap);
+  align-items:start;
+}
+.foundations{display:grid; grid-auto-flow:column; gap:var(--gap); justify-content:end}
+.tableau{display:grid; grid-template-columns: repeat(7, var(--card-w)); gap:var(--gap)}
+
+/* ===== Piles ===== */
+.pile{
+  position:relative;
+  width:var(--card-w);
+  min-height:var(--card-h);
+  border: var(--line) dashed var(--pile-empty);
+  border-radius: var(--radius);
+  outline: none;
+}
+.pile:not(:empty){ border-color: transparent }
+
+/* Drop target highlight */
+.pile.is-target{ box-shadow: 0 0 0 3px var(--outline) inset }
+.pile.invalid{ box-shadow: 0 0 0 3px #d33 inset }
+
+/* Placeholder for empty foundations */
+.pile.foundation:empty::after{
+  content: "A";
+  position:absolute; inset:6px;
+  display:grid; place-items:center;
+  font-weight:700; font-size: clamp(28px, 8vw, 56px);
+  color: rgba(255,255,255,.25);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(1px);
+}
+
+/* ===== Cards ===== */
+.card{
+  width:var(--card-w); height:var(--card-h);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: 0 6px 16px var(--shadow);
+  position:absolute; top:0; left:0;
+  transform-origin: center;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease, top .12s linear, left .12s linear;
+  will-change: transform, top, left;
+}
+/* JS should set --i (0-based) for stacking in piles */
+.pile.tableau .card{ top: calc(var(--i,0) * var(--tab-overlap)) }
+.pile.waste .card{ left: calc(var(--i,0) * var(--waste-overlap)) }
+
+.card.face-up{
+  background: linear-gradient(#fff,#fff) padding-box,
+              linear-gradient(#fff,#fff) border-box;
+  border: 1px solid var(--card-edge);
+}
+.card.face-down{
+  /* Blue diagonal cross-hatch like classic backs */
+  background:
+    repeating-linear-gradient(45deg, #1e64ad 0 6px, #ffffff 6px 8px),
+    repeating-linear-gradient(-45deg, #1e64ad 0 6px, #ffffff 6px 8px);
+  border: 1px solid #1a4880;
+}
+
+/* Card inner layout (optional if JS injects .corner/.center) */
+.card .corner{
+  position:absolute; width:28px; text-align:center; line-height:1;
+  font-weight:700; font-size:18px; font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.card .corner.top-left{ top:6px; left:6px }
+.card .corner.bottom-right{ bottom:6px; right:6px; transform: rotate(180deg) }
+.card .center{ position:absolute; inset:0; display:grid; place-items:center; font-size:64px; opacity:.9 }
+
+/* Suit coloring: apply to .corner and .center */
+.card[data-suit="H"] .corner, .card[data-suit="D"] .corner,
+.card[data-suit="H"] .center, .card[data-suit="D"] .center{ color: var(--red) }
+.card[data-suit="S"] .corner, .card[data-suit="C"] .corner,
+.card[data-suit="S"] .center, .card[data-suit="C"] .center{ color: var(--black) }
+
+/* Interaction states */
+.card.dragging{ cursor: grabbing; filter: drop-shadow(0 10px 24px rgba(0,0,0,.45)); z-index: 1000; }
+.card.lift{ transform: translateY(-4px) }
+.card.hint{ box-shadow: 0 0 0 3px var(--hint) inset, 0 8px 18px rgba(0,0,0,.35) }
+
+/* Focus and keyboard */
+.pile:focus-visible{ box-shadow: 0 0 0 3px rgba(255,255,255,.35) inset }
+.card:focus-visible{ outline: 3px solid var(--outline) }
+
+/* ===== Footer status ===== */
+footer{ display:flex; gap:8px; align-items:center; color:#e7ffe7; opacity:.9 }
+output{ font-variant-numeric: tabular-nums }
+
+/* ===== Left-hand mode support (layout mirrored) ===== */
+.left-hand .game{ direction: rtl }
+.left-hand .pile .card{ left:auto; right:0 }
+.left-hand .pile.waste .card{ right: calc(var(--i,0) * var(--waste-overlap)); left:auto }
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px){
+  :root{ --card-w: 120px; --card-h: 168px; --tab-overlap: 24px; --waste-overlap: 16px; }
+}
+@media (max-width: 900px){
+  :root{ --card-w: 106px; --card-h: 150px; --tab-overlap: 22px; --waste-overlap: 14px; --gap: 10px }
+  .stock-row{ grid-template-columns: var(--card-w) 1fr var(--card-w) auto }
+}
+@media (max-width: 720px){
+  :root{ --card-w: 92px; --card-h: 130px; --tab-overlap: 20px; --waste-overlap: 12px; }
+  .game{ padding: 10px }
+}
+@media (max-width: 600px){
+  :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 18px; --waste-overlap: 10px }
+}

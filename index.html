@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>jonv11 Solitaire</title>
+  <link rel="preload" href="css/style.css" as="style" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1 aria-label="Klondike Solitaire">Solitaire</h1>
+    <nav class="toolbar" aria-label="Game toolbar">
+      <button id="newGame" class="btn" aria-label="Start a new game">New</button>
+      <button id="undo" class="btn" aria-label="Undo last move">Undo</button>
+      <button id="redo" class="btn" aria-label="Redo last undone move">Redo</button>
+      <button id="hint" class="btn" aria-label="Show a hint">Hint</button>
+      <button id="auto" class="btn" aria-label="Auto-complete when safe">Auto</button>
+      <div class="select">
+        <label for="drawCount">Draw</label>
+        <select id="drawCount" aria-label="Draw count">
+          <option value="1" selected>1</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+      <div class="select">
+        <label for="redealPolicy">Redeal</label>
+        <select id="redealPolicy" aria-label="Redeal policy">
+          <option value="unlimited" selected>Unlimited</option>
+          <option value="limited(1)">1</option>
+          <option value="limited(3)">3</option>
+          <option value="none">None</option>
+        </select>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="leftHandMode" />
+        <label for="leftHandMode">Left-hand</label>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="hints" checked />
+        <label for="hints">Hints</label>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="autoComplete" checked />
+        <label for="autoComplete">Auto</label>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="animations" checked />
+        <label for="animations">Anim</label>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="sound" />
+        <label for="sound">Sound</label>
+      </div>
+    </nav>
+  </header>
+
+  <main id="game" class="game" role="main" aria-label="Klondike board">
+    <!-- Top row: stock, waste, foundations -->
+    <section class="stock-row" aria-label="Stock and Waste and Foundations">
+      <div id="stock" class="pile stock" role="list" aria-label="Stock" data-pile="stock" tabindex="0"></div>
+      <div id="waste" class="pile waste" role="list" aria-label="Waste" data-pile="waste" tabindex="0"></div>
+      <div class="spacer" aria-hidden="true"></div>
+
+      <div class="foundations" aria-label="Foundations">
+        <div id="foundation-S" class="pile foundation" role="list" aria-label="Spades foundation" data-pile="foundation" data-suit="S" tabindex="0"></div>
+        <div id="foundation-H" class="pile foundation" role="list" aria-label="Hearts foundation" data-pile="foundation" data-suit="H" tabindex="0"></div>
+        <div id="foundation-D" class="pile foundation" role="list" aria-label="Diamonds foundation" data-pile="foundation" data-suit="D" tabindex="0"></div>
+        <div id="foundation-C" class="pile foundation" role="list" aria-label="Clubs foundation" data-pile="foundation" data-suit="C" tabindex="0"></div>
+      </div>
+    </section>
+
+    <!-- Bottom row: tableau 7 columns -->
+    <section class="tableau" aria-label="Tableau">
+      <div id="tab-1" class="pile tableau" role="list" aria-label="Tableau 1" data-pile="tableau" data-col="1" tabindex="0"></div>
+      <div id="tab-2" class="pile tableau" role="list" aria-label="Tableau 2" data-pile="tableau" data-col="2" tabindex="0"></div>
+      <div id="tab-3" class="pile tableau" role="list" aria-label="Tableau 3" data-pile="tableau" data-col="3" tabindex="0"></div>
+      <div id="tab-4" class="pile tableau" role="list" aria-label="Tableau 4" data-pile="tableau" data-col="4" tabindex="0"></div>
+      <div id="tab-5" class="pile tableau" role="list" aria-label="Tableau 5" data-pile="tableau" data-col="5" tabindex="0"></div>
+      <div id="tab-6" class="pile tableau" role="list" aria-label="Tableau 6" data-pile="tableau" data-col="6" tabindex="0"></div>
+      <div id="tab-7" class="pile tableau" role="list" aria-label="Tableau 7" data-pile="tableau" data-col="7" tabindex="0"></div>
+    </section>
+  </main>
+
+  <footer aria-label="Status bar">
+    <output id="score" for="game" aria-live="polite">Score: 0</output>
+    <span aria-hidden="true"> · </span>
+    <output id="moves" for="game" aria-live="polite">Moves: 0</output>
+    <span aria-hidden="true"> · </span>
+    <output id="time" for="game" aria-live="polite">Time: 00:00</output>
+    <div id="live" class="sr-only" aria-live="polite"></div>
+  </footer>
+
+  <noscript>
+    <p>This app requires JavaScript enabled.</p>
+  </noscript>
+
+  <!-- JS entrypoints -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+          integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+		  crossorigin="anonymous"></script>
+  <script src="js/store.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

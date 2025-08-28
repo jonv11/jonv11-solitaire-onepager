@@ -36,7 +36,7 @@
         clear(el);
         const pile = findPileById(state, id);
         if (!pile) return;
-        pile.cards.forEach((c, i) => el.appendChild(makeCardEl(c, i)));
+        pile.cards.forEach((c, i) => el.appendChild(makeCardEl(c, i, pile)));
         // pile click handler
         wirePile(el);
       });
@@ -54,7 +54,7 @@
     }
 
     // ---------- Elements
-    function makeCardEl(card, i){
+    function makeCardEl(card, i, pile){
       const el = document.createElement("div");
       el.className = "card " + (card.faceUp ? "face-up" : "face-down");
       el.style.setProperty("--i", String(i));
@@ -75,9 +75,14 @@
         el.appendChild(tl); el.appendChild(br); el.appendChild(center);
       }
 
-      // Drag interactions on face-up top sequences only; the Engine will validate anyway.
-      el.addEventListener("mousedown", onDragStart);
-      el.addEventListener("touchstart", onDragStart, { passive:false });
+      // Only allow interaction if faceUp and (not waste OR top of waste)
+      let allow = true;
+      if (!card.faceUp) allow = false;
+      if (pile.kind === 'waste' && i !== pile.cards.length-1) allow = false;
+      if (allow){
+        el.addEventListener('mousedown', onDragStart);
+        el.addEventListener('touchstart', onDragStart, { passive:false });
+      }
       return el;
     }
 
@@ -108,7 +113,20 @@
       return null;
     }
 
-    function topFaceUpIndex(pile){
+    
+    function highlightValidTargetsForCard(card){
+      document.querySelectorAll('.pile.foundation').forEach(el => {
+        const suit = el.getAttribute('data-suit');
+        const pile = findPileById(state, el.id);
+        const dstTop = pile && pile.cards.length ? pile.cards[pile.cards.length-1] : null;
+        const ok = window.Model && Model.canDropOnFoundation(card, dstTop, suit);
+        el.classList.toggle('valid-target', !!ok);
+      });
+    }
+    function clearValidTargets(){
+      document.querySelectorAll('.pile.valid-target').forEach(el => el.classList.remove('valid-target'));
+    }
+function topFaceUpIndex(pile){
       for (let i = pile.cards.length - 1; i >= 0; i--){
         if (pile.cards[i].faceUp) return i;
       }
@@ -136,12 +154,15 @@
           if (idx >= 0){
             selection = { pileId, cardIndex: idx };
             el.classList.add("is-target");
+            const card = findPileById(state, pileId).cards[idx];
+            if (card) highlightValidTargetsForCard(card);
           }
         } else {
           // attempt move selection -> pileId
           tryMove(selection.pileId, selection.cardIndex, pileId);
           // clear UI selection
           document.querySelectorAll(".pile.is-target").forEach(p => p.classList.remove("is-target"));
+          clearValidTargets();
           selection = null;
         }
       });
@@ -184,6 +205,9 @@
         })()
       };
       target.classList.add("dragging");
+      const pileData = findPileById(state, srcPileId);
+      const dragCard = pileData ? pileData.cards[drag.cardIndex] : null;
+      if (dragCard) highlightValidTargetsForCard(dragCard);
       moveTo(target, rect.left, rect.top);
       window.addEventListener("mousemove", onDragMove, { passive:false });
       window.addEventListener("touchmove", onDragMove, { passive:false });
@@ -207,6 +231,7 @@
       const dstPileId = pileElToId(dstPileEl);
 
       drag.el.classList.remove("dragging");
+      clearValidTargets();
       drag = (function finalize(prev){
         if (dstPileId && window.Engine?.move){
           window.Engine.move({ srcPileId: prev.srcPileId, cardIndex: prev.cardIndex, dstPileId });

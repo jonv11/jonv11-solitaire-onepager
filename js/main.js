@@ -307,6 +307,7 @@
 
   // ---------- Wire controls
   function wireControls(){
+    if (window.UI && typeof UI.init === 'function') { UI.init(refs.root); }
     Controller.applySettingsToControls();
     on(refs.btnNew, "click", Controller.newGame);
     on(refs.btnUndo, "click", Controller.undo);

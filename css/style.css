@@ -14,7 +14,7 @@
 
   /* Overlaps */
   --tab-overlap: 28px;          /* vertical fan for tableau */
-  --waste-overlap: 18px;        /* horizontal fan for waste */
+  --waste-overlap: 4px;        /* horizontal fan for waste */
 
   /* Colors */
   --felt-1:#0f6d30;
@@ -72,6 +72,7 @@ h1{margin:0;font-size:20px;font-weight:600}
   outline: none;
 }
 .pile:not(:empty){ border-color: transparent }
+
 
 /* Drop target highlight */
 .pile.is-target{ box-shadow: 0 0 0 3px var(--outline) inset }

@@ -222,7 +222,7 @@
 
   // ---------- Controller
   const Controller = (() => {
-    let settings = Store.getSettings();
+    let settings = Object.assign({}, DEFAULTS, (Store.getSettings && Store.getSettings()) || {});
     let timerId = 0;
 
     function applySettingsToControls(){
@@ -237,7 +237,7 @@
     }
 
     function readSettingsFromControls(){
-      settings = {
+      settings = Object.assign({}, DEFAULTS, {
         drawCount: Number(refs.selDraw?.value ?? 1),
         redealPolicy: String(refs.selRedeal?.value ?? "unlimited"),
         leftHandMode: !!refs.chkLeft?.checked,
@@ -245,7 +245,7 @@
         autoComplete: !!refs.chkAuto?.checked,
         animations: !!refs.chkAnim?.checked,
         sound: !!refs.chkSound?.checked
-      };
+      });
       Store.setSettings(settings);
       document.body.classList.toggle("left-hand", !!settings.leftHandMode);
     }

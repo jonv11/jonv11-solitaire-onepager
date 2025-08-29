@@ -79,8 +79,19 @@ h1{margin:0;font-size:20px;font-weight:600}
 .pile.invalid{ box-shadow: 0 0 0 3px #d33 inset }
 
 /* Placeholder for empty foundations */
+#foundation-S:empty::after{
+  content: "♠";
+}
+#foundation-H:empty::after{
+  content: "♥";
+}
+#foundation-D:empty::after{
+  content: "♦";
+}
+#foundation-C:empty::after{
+  content: "♣";
+}
 .pile.foundation:empty::after{
-  content: "A";
   position:absolute; inset:6px;
   display:grid; place-items:center;
   font-weight:700; font-size: clamp(28px, 8vw, 56px);

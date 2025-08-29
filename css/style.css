@@ -96,8 +96,9 @@ h1{margin:0;font-size:20px;font-weight:600}
   border-radius: calc(var(--radius) + 4px);
   box-shadow: 0 6px 16px var(--shadow);
   position:absolute; top:0; left:0;
-  transform-origin: center;
-  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease, top .12s linear, left .12s linear;
+  /* keep GPU-friendly transform only */
+  transform-origin: top left;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
   will-change: transform, top, left;
 }
 /* JS should set --i (0-based) for stacking in piles */
@@ -133,7 +134,7 @@ h1{margin:0;font-size:20px;font-weight:600}
 .card[data-suit="S"] .center, .card[data-suit="C"] .center{ color: var(--black) }
 
 /* Interaction states */
-.card.dragging{ cursor: grabbing; filter: drop-shadow(0 10px 24px rgba(0,0,0,.45)); z-index: 1000; }
+.card.dragging{ transition: none; will-change: transform, left, top; cursor: grabbing; filter: drop-shadow(0 10px 24px rgba(0,0,0,.45)); z-index: 1000; }
 .card.lift{ transform: translateY(-4px) }
 .card.hint{ box-shadow: 0 0 0 3px var(--hint) inset, 0 8px 18px rgba(0,0,0,.35) }
 

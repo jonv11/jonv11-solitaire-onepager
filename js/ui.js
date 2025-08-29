@@ -141,6 +141,7 @@ function topFaceUpIndex(pile){
 
     function wirePile(el){
       el.addEventListener("click", (e) => {
+		if (isDragging) { e.stopPropagation(); return; }
         const pileId = pileElToId(el);
         if (!pileId || !state) return;
 
@@ -185,6 +186,7 @@ function topFaceUpIndex(pile){
 
     // ---------- Drag interactions (visual only unless Engine.move exists)
     let drag = null; // { el, startX, startY, ox, oy, srcPileId, cardIndex }
+	let isDragging = false;
     function onDragStart(ev){
       const target = ev.currentTarget;
       const pileEl = target.closest(".pile");
@@ -192,23 +194,26 @@ function topFaceUpIndex(pile){
       if (!srcPileId) return;
 
       ev.preventDefault();
-      const p = pointFromEvent(ev);
+	  ev.stopPropagation();
+	  
+      // establish fixed-position baseline instantly to avoid 0,0 flicker
       const rect = target.getBoundingClientRect();
+      target.classList.add("dragging");
+      target.style.position = "fixed";
+      target.style.left = Math.round(rect.left) + "px";
+      target.style.top  = Math.round(rect.top)  + "px";
+      target.style.transform = "translate3d(0,0,0)";
+
+      const p = pointFromEvent(ev);
       drag = {
         el: target,
         startX: p.x, startY: p.y,
         ox: p.x - rect.left, oy: p.y - rect.top,
         srcPileId,
-        cardIndex: (function(){
-          const list = Array.from(pileEl.querySelectorAll(".card"));
-          return list.indexOf(target);
-        })()
+        cardIndex: Array.from(pileEl.querySelectorAll(".card")).indexOf(target)
       };
-      target.classList.add("dragging");
-      const pileData = findPileById(state, srcPileId);
-      const dragCard = pileData ? pileData.cards[drag.cardIndex] : null;
-      if (dragCard) highlightValidTargetsForCard(dragCard);
-      moveTo(target, rect.left, rect.top);
+	  isDragging = true;
+
       window.addEventListener("mousemove", onDragMove, { passive:false });
       window.addEventListener("touchmove", onDragMove, { passive:false });
       window.addEventListener("mouseup", onDragEnd, { passive:false });
@@ -231,19 +236,30 @@ function topFaceUpIndex(pile){
       const dstPileId = pileElToId(dstPileEl);
 
       drag.el.classList.remove("dragging");
-      clearValidTargets();
-      drag = (function finalize(prev){
-        if (dstPileId && window.Engine?.move){
-          window.Engine.move({ srcPileId: prev.srcPileId, cardIndex: prev.cardIndex, dstPileId });
-        }
-        // trigger re-render from Engine event; otherwise snap back
-        return null;
-      })(drag);
+	  let moved = false;
+	  if (dstPileId && window.Engine?.move){
+		const before = JSON.stringify(Engine.getState());
+		Engine.move({ srcPileId: drag.srcPileId, cardIndex: drag.cardIndex, dstPileId });
+		moved = JSON.stringify(Engine.getState()) !== before;
+      }
+	  if (!moved){
+		// snap back to original position
+		const el = drag.el;
+		el.style.transition = "";
+		el.style.transform = "";
+        el.style.position = "";
+        el.style.left = "";
+        el.style.top  = "";
+        el.style.transform = "";
+		el.style.pointerEvents = "";
+	  }
+	  drag = null;
 
       window.removeEventListener("mousemove", onDragMove);
       window.removeEventListener("touchmove", onDragMove);
       window.removeEventListener("mouseup", onDragEnd);
       window.removeEventListener("touchend", onDragEnd);
+	  setTimeout(()=>{ isDragging = false; }, 0);
     }
 
     function moveTo(el, x, y){

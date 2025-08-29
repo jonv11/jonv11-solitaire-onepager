@@ -90,6 +90,7 @@
 
       // scoring (basic)
       if (dst.kind==="foundation") state.score.total += 10;
+	  if (src.kind==="foundation") state.score.total -= 10;
       state.score.moves++;
 
       emit();

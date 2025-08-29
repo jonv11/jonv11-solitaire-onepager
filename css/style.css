@@ -139,7 +139,7 @@ h1{margin:0;font-size:20px;font-weight:600}
 /* Card inner layout (optional if JS injects .corner/.center) */
 .card .corner{
   position:absolute; width:28px; text-align:center; line-height:1;
-  font-weight:700; font-size:18px; font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-weight:700; font-size:24px; font-family: ui-monospace, Menlo, Consolas, monospace;
 }
 .card .corner.top-left{ top:6px; left:6px }
 .card .corner.bottom-right{ bottom:6px; right:6px; transform: rotate(180deg) }

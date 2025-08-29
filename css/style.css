@@ -77,6 +77,13 @@ h1{margin:0;font-size:20px;font-weight:600}
 /* Drop target highlight */
 .pile.is-target{ box-shadow: 0 0 0 3px var(--outline) inset }
 .pile.invalid{ box-shadow: 0 0 0 3px #d33 inset }
+/* Valid drop targets highlight */
+.pile.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 18px rgba(255,255,255,.25) inset; }
+.pile.valid-target.foundation:empty::after{
+  /* stronger suit hint when valid */
+  opacity: .55;
+}
+
 
 /* Placeholder for empty foundations */
 #foundation-S:empty::after{

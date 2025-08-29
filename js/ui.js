@@ -213,6 +213,11 @@ function topFaceUpIndex(pile){
         cardIndex: Array.from(pileEl.querySelectorAll(".card")).indexOf(target)
       };
 	  isDragging = true;
+	  
+      // get the domain card object for highlighting
+      const pile = findPileById(state, srcPileId);
+      const card  = pile ? pile.cards[drag.cardIndex] : null;
+      if (card) highlightValidTargetsForCard(card);
 
       window.addEventListener("mousemove", onDragMove, { passive:false });
       window.addEventListener("touchmove", onDragMove, { passive:false });
@@ -254,6 +259,7 @@ function topFaceUpIndex(pile){
 		el.style.pointerEvents = "";
 	  }
 	  drag = null;
+	  clearValidTargets();
 
       window.removeEventListener("mousemove", onDragMove);
       window.removeEventListener("touchmove", onDragMove);

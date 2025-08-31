@@ -118,6 +118,9 @@ h1{margin:0;font-size:20px;font-weight:600}
   transform-origin: top left;
   transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
   will-change: transform, top, left;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-drag:none;
 }
 /* JS should set --i (0-based) for stacking in piles */
 .pile.tableau .card{ top: calc(var(--i,0) * var(--tab-overlap)) }

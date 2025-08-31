@@ -220,6 +220,7 @@ function topFaceUpIndex(pile){
 
       window.addEventListener("pointermove", onDragMove, { passive:false });
       window.addEventListener("pointerup", onDragEnd, { passive:false });
+	  window.addEventListener("pointercancel", onDragEnd, { passive:false });
     }
 
     function onDragMove(ev){
@@ -260,6 +261,7 @@ function topFaceUpIndex(pile){
 
       window.removeEventListener("pointermove", onDragMove);
       window.removeEventListener("pointerup", onDragEnd);
+	  window.removeEventListener("pointercancel", onDragEnd);
 	  setTimeout(()=>{ isDragging = false; }, 0);
     }
 

@@ -104,8 +104,14 @@
         emit(ev,p){ (map.get(ev)||[]).forEach(fn=>{ try{fn(p);}catch(e){console.error(e);} }); }
       };
     }
+	
+    function tick(){
+      if (!state) return;
+      state.time.elapsedMs = Date.now() - state.time.startedAt;
+      api.emit("tick", state.time);
+    }
 
-    return { ...api, newGame, getState, draw, move };
+    return { ...api, newGame, getState, draw, move, tick };
   })();
 
   window.Engine = Engine;

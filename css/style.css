@@ -174,16 +174,16 @@ output{ font-variant-numeric: tabular-nums }
 
 /* ===== Responsive ===== */
 @media (max-width: 1024px){
-  :root{ --card-w: 120px; --card-h: 168px; --tab-overlap: 24px; --waste-overlap: 16px; }
+  :root{ --card-w: 120px; --card-h: 168px; --tab-overlap: 20px; --waste-overlap: 2px; }
 }
 @media (max-width: 900px){
-  :root{ --card-w: 106px; --card-h: 150px; --tab-overlap: 22px; --waste-overlap: 14px; --gap: 10px }
+  :root{ --card-w: 106px; --card-h: 150px; --tab-overlap: 20px; --waste-overlap: 2px; --gap: 10px }
   .stock-row{ grid-template-columns: var(--card-w) 1fr var(--card-w) auto }
 }
 @media (max-width: 720px){
-  :root{ --card-w: 92px; --card-h: 130px; --tab-overlap: 20px; --waste-overlap: 12px; }
+  :root{ --card-w: 92px; --card-h: 130px; --tab-overlap: 20px; --waste-overlap: 1px; }
   .game{ padding: 10px }
 }
 @media (max-width: 600px){
-  :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 18px; --waste-overlap: 10px }
+  :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 18px; --waste-overlap: 1px }
 }

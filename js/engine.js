@@ -182,8 +182,10 @@ function findHint(){
             return { srcPileId:t.id, cardIndex:i, dstPileId:f.id };
         }
 	  }
+	  if (i > 0 && t.cards[i - 1].faceUp) continue;
       for (let tj=0; tj<state.piles.tableau.length; tj++){
         if (ti===tj) continue;
+		// TODO: avoid moving king at level 0
         if (Model.canDropOnTableau(c, top(state.piles.tableau[tj])))
           return { srcPileId:t.id, cardIndex:i, dstPileId:state.piles.tableau[tj].id };
       }

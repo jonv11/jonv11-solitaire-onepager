@@ -199,9 +199,31 @@ function highlightMove(move){
     // ---------- Drag interactions (visual only unless Engine.move exists)
     let drag = null; // { el, startX, startY, ox, oy, srcPileId, cardIndex }
 	let isDragging = false;
+	
+	function assigneStyleForDrag(target, rect) {
+      target.classList.add("dragging");
+      target.style.position = "fixed";
+      target.style.left = Math.round(rect.left) + "px";
+      target.style.top  = Math.round(rect.top)  + "px";
+      target.style.transform = "translate3d(0,0,0)";
+	}
+	
+	function resetStyleAfterDrag(el) {
+		el.style.transition = "";
+		el.style.transform = "";
+        el.style.position = "";
+        el.style.left = "";
+        el.style.top  = "";
+        el.style.transform = "";
+		el.style.pointerEvents = "";
+	}
+	
     function onDragStart(ev){
       const target = ev.currentTarget;
       const pileEl = target.closest(".pile");
+	  const cards = Array.from(pileEl.querySelectorAll(".card"));
+	  const index = cards.indexOf(target);        // position de la carte sélectionnée
+	  const stack = cards.slice(index);           // cartes à déplacer (inclut target)
       const srcPileId = pileElToId(pileEl);
       if (!srcPileId) {
 		  debugLog("!srcPileId")
@@ -210,23 +232,34 @@ function highlightMove(move){
 
       ev.preventDefault();
 	  ev.stopPropagation();
-	  
-      // establish fixed-position baseline instantly to avoid 0,0 flicker
-      const rect = target.getBoundingClientRect();
-      target.classList.add("dragging");
-      target.style.position = "fixed";
-      target.style.left = Math.round(rect.left) + "px";
-      target.style.top  = Math.round(rect.top)  + "px";
-      target.style.transform = "translate3d(0,0,0)";
 
-      const p = pointFromEvent(ev);
-      drag = {
-        el: target,
-        startX: p.x, startY: p.y,
-        ox: p.x - rect.left, oy: p.y - rect.top,
-        srcPileId,
-        cardIndex: Array.from(pileEl.querySelectorAll(".card")).indexOf(target)
-      };
+	  // rect de la carte d’origine
+	  const baseRect = target.getBoundingClientRect();
+
+	  // snapshot des positions AVANT de changer le style
+	  const snapshots = stack.map(el => ({
+		el,
+		rect: el.getBoundingClientRect(),
+		dy: el.getBoundingClientRect().top - baseRect.top // décalage vertical relatif
+	  }));
+
+	  // appliquer le style "drag" à toutes les cartes de la pile
+	  snapshots.forEach(({el, rect}) => {
+		assigneStyleForDrag(el, rect);
+	  });
+
+	  const p = pointFromEvent(ev);
+
+	  drag = {
+		el: target,
+		els: stack,
+		startX: p.x, startY: p.y,
+		ox: p.x - baseRect.left,
+		oy: p.y - baseRect.top,
+		offsets: snapshots.map(s => s.dy), // pour onDragMove
+		srcPileId,
+		cardIndex: index
+	  };
 	  isDragging = true;
 	  
       // get the domain card object for highlighting
@@ -238,6 +271,17 @@ function highlightMove(move){
       window.addEventListener("pointerup", onDragEnd, { passive:false });
 	  window.addEventListener("pointercancel", onDragEnd, { passive:false });
     }
+
+	function onDragMove(ev){
+	  if (!isDragging || !drag) return;
+	  ev.preventDefault();
+
+	  const p = pointFromEvent(ev);
+
+	  drag.els.forEach((el, i) => { 
+		moveTo(el, p.x - drag.ox, (p.y - drag.oy + drag.offsets[i]));
+	  });
+	}
 
     function onDragMove(ev){
       if (!drag) return;
@@ -262,7 +306,7 @@ function highlightMove(move){
 	  debugLog("dstPileEl = " + dstPileEl)
 	  debugLog("dstPileId = " + dstPileId)
 
-      drag.el.classList.remove("dragging");
+      drag.els.forEach(el => { el.classList.remove("dragging"); });
 	  let moved = false;
 	  if (dstPileId && window.Engine?.move){
 		const before = JSON.stringify(Engine.getState());
@@ -272,14 +316,7 @@ function highlightMove(move){
       }
 	  if (!moved){
 		// snap back to original position
-		const el = drag.el;
-		el.style.transition = "";
-		el.style.transform = "";
-        el.style.position = "";
-        el.style.left = "";
-        el.style.top  = "";
-        el.style.transform = "";
-		el.style.pointerEvents = "";
+		drag.els.forEach(el => { resetStyleAfterDrag(el); });
 		debugLog("!moved")
 	  }
 	  drag = null;

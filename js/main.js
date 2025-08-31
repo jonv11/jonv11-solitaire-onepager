@@ -124,7 +124,11 @@
     function draw(){ Engine.draw && Engine.draw(); }
     function undo(){ /* to be implemented with Engine */ }
     function redo(){ /* to be implemented with Engine */ }
-    function hint(){ /* to be implemented with Engine */ }
+	function hint(){
+	  const move = Engine.findHint && Engine.findHint();
+	  if (move) UI.highlightMove(move);
+	  else { UI.toast("No moves"); }
+	}
     function autoComplete(){ /* to be implemented with Engine */ }
 
     // Event wires
@@ -138,6 +142,10 @@
     Engine.on && Engine.on("tick", (time) => {
       if (refs.time) refs.time.textContent = "Time: " + formatTime(time.elapsedMs);
     });
+	
+	Engine.on && Engine.on("win",  () => UI.toast("You win!"));
+	Engine.on && Engine.on("stuck",() => UI.toast("No moves. Stuck."));
+
 
     return { newGame, draw, undo, redo, hint, autoComplete, applySettingsToControls };
   })();

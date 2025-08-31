@@ -83,12 +83,12 @@
 
   /** Make the four foundation piles */
   function makeFoundations(){
-    return SUITS.map(s => ({ id: 'F'+s, kind: 'foundation', suit: s, cards: [] }));
+    return SUITS.map(s => ({ id: 'foundation-'+s, kind: 'foundation', suit: s, cards: [] }));
   }
 
   /** Make 7 tableau piles */
   function makeTableau(){
-    return Array.from({length:7}, (_,i) => ({ id: 'T'+(i+1), kind: 'tableau', col: i+1, cards: [] }));
+    return Array.from({length:7}, (_,i) => ({ id: 'tab-'+(i+1), kind: 'tableau', col: i+1, cards: [] }));
   }
 
   /** Create an ordered deck */

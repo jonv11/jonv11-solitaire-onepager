@@ -8,6 +8,60 @@
   const Engine = (() => {
     const api = EventEmitter();
     let state = null;
+	
+	// ---- END CONDITION	
+	function isWin(st){
+	  const n = st.piles.foundations.reduce((s,f)=>s+f.cards.length,0);
+	  return n === 52;
+	}
+
+	// énumération minimale des coups
+	function hasAnyLegalMove(st){
+	  const top = p => p.cards[p.cards.length-1] || null;
+
+	  // waste -> foundation/tableau
+	  if (st.piles.waste.cards.length){
+		const c = top(st.piles.waste);
+		for (const f of st.piles.foundations) if (Model.canDropOnFoundation(c, top(f), f.suit)) return true;
+		for (const t of st.piles.tableau)    if (Model.canDropOnTableau(c, top(t))) return true;
+	  }
+
+	  // tableau -> foundation/tableau
+	  for (const t of st.piles.tableau){
+		// carte(s) face-up à partir du premier index face-up
+		let i = t.cards.findIndex(c=>c.faceUp);
+		if (i === -1) continue;
+		for (; i < t.cards.length; i++){
+		  const c = t.cards[i];
+		  for (const f of st.piles.foundations) if (Model.canDropOnFoundation(c, top(f), f.suit)) return true;
+		  for (const tt of st.piles.tableau) if (tt !== t && Model.canDropOnTableau(c, top(tt))) return true;
+		}
+	  }
+	  return false;
+	}
+
+	function canDraw(st){
+	  if (st.piles.stock.cards.length) return true;
+	  if (!st.piles.waste.cards.length) return false;
+	  // autorisé à reconstituer le stock ?
+	  if (st.settings.redealPolicy === "none") return false;
+	  // si tu gères des limites: lire un compteur redealsRestant > 0
+	  return true;
+	}
+
+	function isStuck(st){
+	  return !isWin(st) && !hasAnyLegalMove(st) && !canDraw(st);
+	}
+
+	function endCheck(){
+	  if (isWin(state)){
+		state.score.total += 100; // bonus simple
+		api.emit("win", state);
+	  } else if (isStuck(state)){
+		api.emit("stuck", state);
+	  }
+	}
+
 
     // ---------- Internal helpers
     function emit(){ api.emit("state", state); }
@@ -49,6 +103,7 @@
     function newGame(settings){
       state = Model.deal(Math.floor(Math.random()*1e9), settings);
       emit();
+	  endCheck();
       return state;
     }
 
@@ -72,6 +127,7 @@
       }
       state.score.moves++;
       emit();
+	  endCheck();
     }
 
     /** @param {{srcPileId:string, cardIndex:number, dstPileId:string}} move */
@@ -94,7 +150,48 @@
       state.score.moves++;
 
       emit();
+	  endCheck();
     }
+	
+function findHint(){
+  if (!state) return null;
+  const top = p => p.cards[p.cards.length-1] || null;
+
+  // 1. waste → foundation ou tableau
+  if (state.piles.waste.cards.length){
+    const c = top(state.piles.waste);
+    for (const f of state.piles.foundations){
+      if (Model.canDropOnFoundation(c, top(f), f.suit))
+        return { srcPileId:"waste", cardIndex: state.piles.waste.cards.length-1, dstPileId:f.id };
+    }
+    for (const t of state.piles.tableau){
+      if (Model.canDropOnTableau(c, top(t)))
+        return { srcPileId:"waste", cardIndex: state.piles.waste.cards.length-1, dstPileId:t.id };
+    }
+  }
+
+  // 2. tableau → foundation ou tableau
+  for (let ti=0; ti<state.piles.tableau.length; ti++){
+    const t = state.piles.tableau[ti];
+    for (let i=0; i<t.cards.length; i++){
+      if (!t.cards[i].faceUp) continue;
+      const c = t.cards[i];
+	  if(i === t.cards.length - 1) {
+        for (const f of state.piles.foundations){
+          if (Model.canDropOnFoundation(c, top(f), f.suit))
+            return { srcPileId:t.id, cardIndex:i, dstPileId:f.id };
+        }
+	  }
+      for (let tj=0; tj<state.piles.tableau.length; tj++){
+        if (ti===tj) continue;
+        if (Model.canDropOnTableau(c, top(state.piles.tableau[tj])))
+          return { srcPileId:t.id, cardIndex:i, dstPileId:state.piles.tableau[tj].id };
+      }
+    }
+  }
+
+  return null;
+}
 
     // Event Emitter minimal
     function EventEmitter(){
@@ -111,7 +208,7 @@
       api.emit("tick", state.time);
     }
 
-    return { ...api, newGame, getState, draw, move, tick };
+    return { ...api, newGame, getState, draw, move, tick, findHint };
   })();
 
   window.Engine = Engine;

@@ -79,6 +79,7 @@ h1{margin:0;font-size:20px;font-weight:600}
 .pile.invalid{ box-shadow: 0 0 0 3px #d33 inset }
 /* Valid drop targets highlight */
 .pile.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 18px rgba(255,255,255,.25) inset; }
+.card.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 18px rgba(255,255,255,.25) inset; }
 .pile.valid-target.foundation:empty::after{
   /* stronger suit hint when valid */
   opacity: .55;
@@ -281,3 +282,82 @@ output{ font-variant-numeric: tabular-nums }
   .game{ max-width: 100vw; }
 }
 
+
+/* collapsible options */
+.toolbar { gap: 8px; align-items: center; }
+.opts { display:inline-block; }
+.opts > summary.btn { list-style: none; cursor: pointer; }
+.opts > summary::-webkit-details-marker { display: none; }
+.opts[open] > summary { background: rgba(255,255,255,.08); }
+.opts-panel {
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: rgba(0,0,0,.15);
+  display: grid;
+  grid-auto-flow: row;
+  gap: 8px;
+}
+@media (max-width: 900px){
+  .opts-panel { position: relative; }
+}
+
+/* same column grid for both rows */
+.game{ display:grid; gap:var(--gap); padding:var(--gap); max-width:calc(7*var(--card-w) + 8*var(--gap)); margin:0 auto; }
+
+/* top row aligns to 7 columns */
+.stock-row{
+  display:grid;
+  grid-template-columns: repeat(7, var(--card-w));
+  gap:var(--gap);
+  align-items:start;
+}
+
+/* place items on specific columns */
+#stock{ grid-column: 1; }
+.spacer{ grid-column: 3; width: var(--card-w); height: var(--card-h); }
+#waste{ grid-column: 2; }
+.foundations{
+  grid-column: 4 / span 4;               /* columns 4–7 */
+  display:grid;
+  grid-template-columns: repeat(4, var(--card-w));
+  gap:var(--gap);
+  justify-content:start;
+}
+
+/* bottom row already 7 columns */
+.tableau{ display:grid; grid-template-columns: repeat(7, var(--card-w)); gap:var(--gap); }
+
+/* Critical live banner */
+#live {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, #c62828, #b71c1c); /* rouge alerte */
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .2px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+  z-index: 2000;
+  pointer-events: none;
+
+  /* animé: caché par défaut */
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+/* état visible */
+#live.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* variante info (optionnel) */
+#live.info { background: linear-gradient(180deg, #1565c0, #0d47a1); }
+#live.ok   { background: linear-gradient(180deg, #2e7d32, #1b5e20); }
+
+
+.card.hint{ box-shadow: 0 0 0 3px #ffcc00 inset, 0 0 12px #ffcc00; }

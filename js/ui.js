@@ -134,6 +134,46 @@
       }
       return -1;
     }
+	
+function toast(msg){
+  showBanner(msg, { kind: "info", ms: 1500 })
+}
+
+// Critical banner helpers
+let liveTimer = 0;
+function showBanner(msg, opts = {}) {
+  const el = document.getElementById("live");
+  if (!el) return;
+  const { kind = "alert", ms = 2000 } = opts; // kind: "alert"|"info"|"ok"
+  el.textContent = msg;
+  el.setAttribute("role", "alert");
+  el.classList.remove("sr-only", "info", "ok");
+  if (kind === "info") el.classList.add("info");
+  if (kind === "ok")   el.classList.add("ok");
+  el.classList.add("show");
+  if (liveTimer) clearTimeout(liveTimer);
+  liveTimer = setTimeout(hideBanner, ms);
+}
+function hideBanner(){
+  const el = document.getElementById("live");
+  if (!el) return;
+  el.classList.remove("show", "info", "ok");
+  // laisse le texte pour accessibilité; remettra à jour au prochain show
+}
+
+function highlightMove(move){
+  clearValidTargets();
+  if (!move) return;
+  const srcEl = document.getElementById(move.srcPileId)?.querySelectorAll('.card')[move.cardIndex];
+  const dstPile = document.getElementById(move.dstPileId);
+  const dstEl = dstPile?.querySelector('.card:last-child');
+  if (srcEl) srcEl.classList.add('hint');
+  if (dstPile) dstPile.classList.add('valid-target');
+  if (dstEl) dstEl.classList.add('valid-target');
+  setTimeout(()=>{ srcEl?.classList.remove('hint'); dstEl?.classList.remove('valid-target'); dstPile?.classList.remove('valid-target'); }, 1500);
+}
+
+
 
     // ---------- Click interactions
     function onStockClick(e){
@@ -272,7 +312,7 @@
       };
     }
 
-    return { ...api, init, render, applyDeltas, updateStatus };
+    return { ...api, init, render, toast, applyDeltas, updateStatus, highlightMove };
   })();
 
   window.UI = UI;

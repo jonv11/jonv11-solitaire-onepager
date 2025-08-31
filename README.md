@@ -131,8 +131,7 @@ interface GameState {
 - **engine.js**: shuffling, deal, move validation, scoring, hint engine, win detection.  
 - **ui.js**: DOM bindings, drag-drop logic, focus navigation, ARIA roles, animations.  
 - **store.js**: persistence API for settings, stats, and saved games.  
-- **main.js**: boot, event wiring, settings panel.  
-- **assets/svg/**: minimal suits and rank icons (A/J/Q/K), simple card back.
+- **main.js**: boot, event wiring, settings panel.
 
 DOM updates are incremental: compute `UndoDelta[]` per move and apply targeted patches. Avoid global reflow.
 
@@ -171,8 +170,6 @@ jonv11-solitaire-onepager/
 │   ├── engine.js
 │   ├── ui.js
 │   └── main.js
-├── assets/
-│   └── svg/            # suits + A/J/Q/K + back
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── CONTRIBUTING.md
@@ -244,12 +241,10 @@ Protect `main` with required status checks and 1 review.
 ## Roadmap
 
 - Drag-and-drop with rollback when illegal.
-- Click-to-move mode parity with DnD.
 - Undo/Redo for all actions including settings changes.
 - Hints and auto-complete.
 - Vegas and Standard scoring, timer, and stats UI.
 - Left-hand mode, draw-1/draw-3, redeal policies.
-- Minimal SVG icon pack and responsive card layout.
 - GitHub Pages deployment.
 
 See `docs/ROADMAP.md` for details.
@@ -276,5 +271,4 @@ MIT. See `LICENSE`.
 
 ## Credits
 
-- Card suit and rank icons are custom minimal SVGs in `assets/svg/`.  
 - This project follows the `jonv11` repository conventions for structure, naming, and CI.

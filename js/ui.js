@@ -8,6 +8,11 @@
 */
 (function(){
   'use strict';
+  
+  function debugLog(txt) {
+	if(console && console.log)
+		console.log("DEBUG:", txt);
+  }
 
   const UI = (() => {
     const api = EventEmitter();
@@ -37,8 +42,6 @@
         const pile = findPileById(state, id);
         if (!pile) return;
         pile.cards.forEach((c, i) => el.appendChild(makeCardEl(c, i, pile)));
-        // pile click handler
-        wirePile(el);
       });
 
       // stock click → draw
@@ -125,7 +128,7 @@
     function clearValidTargets(){
       document.querySelectorAll('.pile.valid-target').forEach(el => el.classList.remove('valid-target'));
     }
-function topFaceUpIndex(pile){
+    function topFaceUpIndex(pile){
       for (let i = pile.cards.length - 1; i >= 0; i--){
         if (pile.cards[i].faceUp) return i;
       }
@@ -136,36 +139,6 @@ function topFaceUpIndex(pile){
     function onStockClick(e){
       if (e) e.preventDefault();
       if (window.Engine?.draw) window.Engine.draw();
-    }
-
-    function wirePile(el){
-      el.addEventListener("click", (e) => {
-		if (isDragging) { e.stopPropagation(); return; }
-        const pileId = pileElToId(el);
-        if (!pileId || !state) return;
-
-        // If stock clicked, draw handled separately
-        if (pileId === "stock") return;
-
-        if (!selection){
-          // select source
-          const pile = findPileById(state, pileId);
-          const idx = topFaceUpIndex(pile);
-          if (idx >= 0){
-            selection = { pileId, cardIndex: idx };
-            el.classList.add("is-target");
-            const card = findPileById(state, pileId).cards[idx];
-            if (card) highlightValidTargetsForCard(card);
-          }
-        } else {
-          // attempt move selection -> pileId
-          tryMove(selection.pileId, selection.cardIndex, pileId);
-          // clear UI selection
-          document.querySelectorAll(".pile.is-target").forEach(p => p.classList.remove("is-target"));
-          clearValidTargets();
-          selection = null;
-        }
-      });
     }
 
     function tryMove(srcPileId, cardIndex, dstPileId){
@@ -190,7 +163,10 @@ function topFaceUpIndex(pile){
       const target = ev.currentTarget;
       const pileEl = target.closest(".pile");
       const srcPileId = pileElToId(pileEl);
-      if (!srcPileId) return;
+      if (!srcPileId) {
+		  debugLog("!srcPileId")
+		  return;
+	  }
 
       ev.preventDefault();
 	  ev.stopPropagation();
@@ -231,18 +207,27 @@ function topFaceUpIndex(pile){
     }
 
     function onDragEnd(ev){
-      if (!drag) return;
+      if (!drag) {
+		  debugLog("!drag")
+		  return;
+	  }
       ev.preventDefault();
       const p = pointFromEvent(ev);
       const dst = document.elementFromPoint(p.x, p.y);
       const dstPileEl = dst ? dst.closest(".pile") : null;
       const dstPileId = pileElToId(dstPileEl);
+	  
+	  debugLog("p = " + p)
+	  debugLog("dst = " + dst)
+	  debugLog("dstPileEl = " + dstPileEl)
+	  debugLog("dstPileId = " + dstPileId)
 
       drag.el.classList.remove("dragging");
 	  let moved = false;
 	  if (dstPileId && window.Engine?.move){
 		const before = JSON.stringify(Engine.getState());
 		Engine.move({ srcPileId: drag.srcPileId, cardIndex: drag.cardIndex, dstPileId });
+		debugLog("Engine.move({ srcPileId: " + drag.srcPileId + ", cardIndex: " + drag.cardIndex + ", " + dstPileId + " });")
 		moved = JSON.stringify(Engine.getState()) !== before;
       }
 	  if (!moved){
@@ -255,6 +240,7 @@ function topFaceUpIndex(pile){
         el.style.top  = "";
         el.style.transform = "";
 		el.style.pointerEvents = "";
+		debugLog("!moved")
 	  }
 	  drag = null;
 	  clearValidTargets();

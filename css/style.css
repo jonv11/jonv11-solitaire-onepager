@@ -187,3 +187,97 @@ output{ font-variant-numeric: tabular-nums }
 @media (max-width: 600px){
   :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 18px; --waste-overlap: 1px }
 }
+
+
+
+/* ===== Mobile-safe padding (notch etc.) ===== */
+@supports(padding:max(0px)) {
+  body { padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                 env(safe-area-inset-bottom) env(safe-area-inset-left); }
+}
+
+/* ===== Compact cards: small screens (portrait) ===== */
+@media (max-width: 420px) and (orientation: portrait){
+  :root{
+    --gap: 8px;
+    --card-w: 70px; --card-h: 100px;
+    --tab-overlap: 16px; --waste-overlap: 1px;
+    --radius: 8px;
+  }
+  .pile.foundation:empty::after{ font-size: clamp(22px, 10vw, 38px) }
+  .card{ box-shadow: 0 4px 10px var(--shadow) }
+  .card .corner{ font-size: 20px; width: 24px }
+  .card .center{ font-size: 52px }
+  .game{ padding: 8px; max-width: 100vw }
+}
+
+/* ===== Ultra-compact: very narrow phones ===== */
+@media (max-width: 360px){
+  :root{
+    --card-w: 64px; --card-h: 92px;
+    --tab-overlap: 14px; --gap: 6px;
+  }
+  .card .center{ font-size: 46px }
+}
+
+/* ===== Landscape compaction: small height (iPhone landscape) ===== */
+@media (max-height: 430px) and (orientation: landscape){
+  :root{
+    --gap: 6px;
+    --card-w: 68px; --card-h: 96px;      /* lighter footprint */
+    --tab-overlap: 14px; --waste-overlap: 1px;
+    --radius: 6px; --line: 1px;
+  }
+  /* Reduce visual weight, keep legibility */
+  .card{ box-shadow: 0 2px 6px rgba(0,0,0,.25) }
+  .card.face-up{ border-color: #ddd }
+  .card .corner{ font-size: 18px; width: 22px }
+  .card .center{ font-size: 44px }
+
+  /* Compress stacked backs: show depth without full cards */
+  .pile.tableau .card.face-down:not(:last-child){
+    height: 12px;
+    border-radius: 4px;
+    background:
+      repeating-linear-gradient(45deg,#cfd7e6 0 4px,#eef2f8 4px 8px);
+    border: 1px solid #c5ccdb;
+  }
+
+  /* Tighter grids */
+  .stock-row{ grid-template-columns: var(--card-w) 1fr var(--card-w) auto }
+  .tableau{ grid-template-columns: repeat(7, var(--card-w)) }
+
+  /* Scale board if overflow occurs, keep interactions stable */
+  .game{
+    transform: scale(.92);
+    transform-origin: top left;
+    width: calc(100% / .92);
+  }
+}
+
+/* ===== Mid tablets in landscape ===== */
+@media (min-width: 721px) and (max-width: 1024px) and (orientation: landscape){
+  :root{
+    --card-w: 88px; --card-h: 128px;
+    --tab-overlap: 18px; --gap: 8px;
+  }
+  .card .corner{ font-size: 20px; width: 24px }
+  .card .center{ font-size: 54px }
+}
+
+/* ===== Touch clarity tweaks (all mobile) ===== */
+@media (hover: none) and (pointer: coarse){
+  .pile{ border-color: var(--pile-empty); }
+  .pile.is-target,
+  .pile.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 14px rgba(255,255,255,.2) inset }
+  .card{ touch-action: none } /* aligns with JS pointer events */
+  footer, header{ padding: 6px 8px; }
+  .btn, .select select, .toggle label{ font-size: 14px }
+}
+
+/* ===== Prevent accidental scroll while interacting on small screens ===== */
+@media (max-width: 768px){
+  html, body{ overscroll-behavior: none }
+  .game{ max-width: 100vw; }
+}
+

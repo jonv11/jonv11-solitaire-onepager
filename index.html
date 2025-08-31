@@ -56,6 +56,15 @@
     </nav>
   </header>
 
+  <footer aria-label="Status bar">
+    <output id="score" for="game" aria-live="polite">Score: 0</output>
+    <span aria-hidden="true"> · </span>
+    <output id="moves" for="game" aria-live="polite">Moves: 0</output>
+    <span aria-hidden="true"> · </span>
+    <output id="time" for="game" aria-live="polite">Time: 00:00</output>
+    <div id="live" class="sr-only" aria-live="polite"></div>
+  </footer>
+
   <main id="game" class="game" role="main" aria-label="Klondike board">
     <!-- Top row: stock, waste, foundations -->
     <section class="stock-row" aria-label="Stock and Waste and Foundations">
@@ -82,15 +91,6 @@
       <div id="tab-7" class="pile tableau" role="list" aria-label="Tableau 7" data-pile="tableau" data-col="7" tabindex="0"></div>
     </section>
   </main>
-
-  <footer aria-label="Status bar">
-    <output id="score" for="game" aria-live="polite">Score: 0</output>
-    <span aria-hidden="true"> · </span>
-    <output id="moves" for="game" aria-live="polite">Moves: 0</output>
-    <span aria-hidden="true"> · </span>
-    <output id="time" for="game" aria-live="polite">Time: 00:00</output>
-    <div id="live" class="sr-only" aria-live="polite"></div>
-  </footer>
 
   <noscript>
     <p>This app requires JavaScript enabled.</p>

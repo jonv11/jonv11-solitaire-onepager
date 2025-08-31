@@ -199,22 +199,22 @@ function highlightMove(move){
     // ---------- Drag interactions (visual only unless Engine.move exists)
     let drag = null; // { el, startX, startY, ox, oy, srcPileId, cardIndex }
 	let isDragging = false;
+
+    function moveTo(el, x, y){
+	  el.style.position = "fixed";
+      el.style.left = Math.round(x) + "px";
+      el.style.top  = Math.round(y) + "px";
+    }
 	
 	function assigneStyleForDrag(target, rect) {
       target.classList.add("dragging");
-      target.style.position = "fixed";
-      target.style.left = Math.round(rect.left) + "px";
-      target.style.top  = Math.round(rect.top)  + "px";
-      target.style.transform = "translate3d(0,0,0)";
+      target.style.pointerEvents = "none";
 	}
 	
 	function resetStyleAfterDrag(el) {
-		el.style.transition = "";
-		el.style.transform = "";
         el.style.position = "";
         el.style.left = "";
         el.style.top  = "";
-        el.style.transform = "";
 		el.style.pointerEvents = "";
 	}
 	
@@ -226,7 +226,7 @@ function highlightMove(move){
 	  const stack = cards.slice(index);           // cartes à déplacer (inclut target)
       const srcPileId = pileElToId(pileEl);
       if (!srcPileId) {
-		  debugLog("!srcPileId")
+		  //debugLog("!srcPileId")
 		  return;
 	  }
 
@@ -283,16 +283,9 @@ function highlightMove(move){
 	  });
 	}
 
-    function onDragMove(ev){
-      if (!drag) return;
-      ev.preventDefault();
-      const p = pointFromEvent(ev);
-      moveTo(drag.el, p.x - drag.ox, p.y - drag.oy);
-    }
-
     function onDragEnd(ev){
       if (!drag) {
-		  debugLog("!drag")
+		  //debugLog("!drag")
 		  return;
 	  }
       ev.preventDefault();
@@ -301,23 +294,23 @@ function highlightMove(move){
       const dstPileEl = dst ? dst.closest(".pile") : null;
       const dstPileId = pileElToId(dstPileEl);
 	  
-	  debugLog("p = " + p)
-	  debugLog("dst = " + dst)
-	  debugLog("dstPileEl = " + dstPileEl)
-	  debugLog("dstPileId = " + dstPileId)
+	  //debugLog("p = " + p)
+	  //debugLog("dst = " + dst)
+	  //debugLog("dstPileEl = " + dstPileEl)
+	  //debugLog("dstPileId = " + dstPileId)
 
       drag.els.forEach(el => { el.classList.remove("dragging"); });
 	  let moved = false;
 	  if (dstPileId && window.Engine?.move){
 		const before = JSON.stringify(Engine.getState());
 		Engine.move({ srcPileId: drag.srcPileId, cardIndex: drag.cardIndex, dstPileId });
-		debugLog("Engine.move({ srcPileId: " + drag.srcPileId + ", cardIndex: " + drag.cardIndex + ", " + dstPileId + " });")
+		//debugLog("Engine.move({ srcPileId: " + drag.srcPileId + ", cardIndex: " + drag.cardIndex + ", " + dstPileId + " });")
 		moved = JSON.stringify(Engine.getState()) !== before;
       }
 	  if (!moved){
 		// snap back to original position
 		drag.els.forEach(el => { resetStyleAfterDrag(el); });
-		debugLog("!moved")
+		//debugLog("!moved")
 	  }
 	  drag = null;
 	  clearValidTargets();
@@ -326,13 +319,6 @@ function highlightMove(move){
       window.removeEventListener("pointerup", onDragEnd);
 	  window.removeEventListener("pointercancel", onDragEnd);
 	  setTimeout(()=>{ isDragging = false; }, 0);
-    }
-
-    function moveTo(el, x, y){
-      el.style.position = "fixed";
-      el.style.left = Math.round(x) + "px";
-      el.style.top  = Math.round(y) + "px";
-      el.style.pointerEvents = "none";
     }
 
     function pointFromEvent(ev){

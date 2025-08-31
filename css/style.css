@@ -175,18 +175,18 @@ output{ font-variant-numeric: tabular-nums }
 
 /* ===== Responsive ===== */
 @media (max-width: 1024px){
-  :root{ --card-w: 120px; --card-h: 168px; --tab-overlap: 24px; --waste-overlap: 2px; }
+  :root{ --card-w: 120px; --card-h: 168px; --tab-overlap: 26px; --waste-overlap: 2px; }
 }
 @media (max-width: 900px){
-  :root{ --card-w: 106px; --card-h: 150px; --tab-overlap: 24px; --waste-overlap: 2px; --gap: 10px }
+  :root{ --card-w: 106px; --card-h: 150px; --tab-overlap: 26px; --waste-overlap: 2px; --gap: 10px }
   .stock-row{ grid-template-columns: var(--card-w) 1fr var(--card-w) auto }
 }
 @media (max-width: 720px){
-  :root{ --card-w: 92px; --card-h: 130px; --tab-overlap: 24px; --waste-overlap: 1px; }
+  :root{ --card-w: 92px; --card-h: 130px; --tab-overlap: 26px; --waste-overlap: 1px; }
   .game{ padding: 10px }
 }
 @media (max-width: 600px){
-  :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 24px; --waste-overlap: 1px }
+  :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 26px; --waste-overlap: 1px }
 }
 
 
@@ -202,7 +202,7 @@ output{ font-variant-numeric: tabular-nums }
   :root{
     --gap: 8px;
     --card-w: 70px; --card-h: 100px;
-    --tab-overlap: 24px; --waste-overlap: 1px;
+    --tab-overlap: 26px; --waste-overlap: 1px;
     --radius: 8px;
   }
   .pile.foundation:empty::after{ font-size: clamp(22px, 10vw, 38px) }
@@ -216,7 +216,7 @@ output{ font-variant-numeric: tabular-nums }
 @media (max-width: 360px){
   :root{
     --card-w: 64px; --card-h: 92px;
-    --tab-overlap: 24px; --gap: 6px;
+    --tab-overlap: 26px; --gap: 6px;
   }
   .card .center{ font-size: 46px }
 }
@@ -226,7 +226,7 @@ output{ font-variant-numeric: tabular-nums }
   :root{
     --gap: 6px;
     --card-w: 68px; --card-h: 96px;      /* lighter footprint */
-    --tab-overlap: 24px; --waste-overlap: 1px;
+    --tab-overlap: 26px; --waste-overlap: 1px;
     --radius: 6px; --line: 1px;
   }
   /* Reduce visual weight, keep legibility */
@@ -260,7 +260,7 @@ output{ font-variant-numeric: tabular-nums }
 @media (min-width: 721px) and (max-width: 1024px) and (orientation: landscape){
   :root{
     --card-w: 88px; --card-h: 128px;
-    --tab-overlap: 24px; --gap: 8px;
+    --tab-overlap: 26px; --gap: 8px;
   }
   .card .corner{ font-size: 20px; width: 24px }
   .card .center{ font-size: 54px }

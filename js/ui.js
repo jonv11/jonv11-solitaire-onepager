@@ -43,7 +43,7 @@
 
       // stock click → draw
       const stockEl = document.getElementById("stock");
-      stockEl && stockEl.addEventListener("click", onStockClick, { passive:true });
+      stockEl && stockEl.addEventListener("click", onStockClick, { passive:false });
     }
 
     function applyDeltas(_deltas, st){ render(st); }
@@ -80,8 +80,7 @@
       if (!card.faceUp) allow = false;
       if (pile.kind === 'waste' && i !== pile.cards.length-1) allow = false;
       if (allow){
-        el.addEventListener('mousedown', onDragStart);
-        el.addEventListener('touchstart', onDragStart, { passive:false });
+        el.addEventListener('pointerdown', onDragStart);
       }
       return el;
     }
@@ -219,10 +218,8 @@ function topFaceUpIndex(pile){
       const card  = pile ? pile.cards[drag.cardIndex] : null;
       if (card) highlightValidTargetsForCard(card);
 
-      window.addEventListener("mousemove", onDragMove, { passive:false });
-      window.addEventListener("touchmove", onDragMove, { passive:false });
-      window.addEventListener("mouseup", onDragEnd, { passive:false });
-      window.addEventListener("touchend", onDragEnd, { passive:false });
+      window.addEventListener("pointermove", onDragMove, { passive:false });
+      window.addEventListener("pointerup", onDragEnd, { passive:false });
     }
 
     function onDragMove(ev){
@@ -261,10 +258,8 @@ function topFaceUpIndex(pile){
 	  drag = null;
 	  clearValidTargets();
 
-      window.removeEventListener("mousemove", onDragMove);
-      window.removeEventListener("touchmove", onDragMove);
-      window.removeEventListener("mouseup", onDragEnd);
-      window.removeEventListener("touchend", onDragEnd);
+      window.removeEventListener("pointermove", onDragMove);
+      window.removeEventListener("pointerup", onDragEnd);
 	  setTimeout(()=>{ isDragging = false; }, 0);
     }
 

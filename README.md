@@ -47,13 +47,11 @@ All 52 cards placed on foundations.
 
 - **Desktop**
   - Drag a card or valid sequence onto a legal target.
-  - Click a source, then click a destination to move.
   - Double-click a card to auto-move to a foundation if legal.
   - Keyboard: `Space` draw, `U` undo, `R` redo, `H` hint, `A` auto-complete, `←/→/↑/↓` focus navigation, `Enter` move when a target is legal.
 
 - **Mobile/Tablet**
-  - Tap source then tap destination.
-  - Long-press to pick up for drag if enabled in settings.
+  - Drag a card or valid sequence onto a legal target.
   - Double-tap to auto-move to foundation.
 
 ---

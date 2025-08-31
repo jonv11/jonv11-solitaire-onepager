@@ -209,8 +209,24 @@ function findHint(){
       state.time.elapsedMs = Date.now() - state.time.startedAt;
       api.emit("tick", state.time);
     }
+	
+function autoMoveOne({srcPileId, cardIndex}){
+  const src = pileById(srcPileId);
+  if (!src) return;
 
-    return { ...api, newGame, getState, draw, move, tick, findHint };
+  const card = src.cards[cardIndex];
+  if (!card) return;
+
+  // Try to drop onto correct foundation
+  const f = state.piles.foundations.find(x => x.suit === card.suit);
+  const top = f.cards.length ? f.cards[f.cards.length-1] : null;
+  if (Model.canDropOnFoundation(card, top, f.suit)){
+    move({ srcPileId, cardIndex, dstPileId: f.id });
+  }
+}
+
+
+    return { ...api, newGame, getState, draw, move, tick, findHint, autoMoveOne };
   })();
 
   window.Engine = Engine;

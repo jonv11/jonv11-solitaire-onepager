@@ -392,6 +392,7 @@ body{ padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset
 		height:calc(var(--card-h) / 2);
 		min-height:calc(var(--card-h) / 2);
 	}
+	.pile.foundation:empty::after { line-height: calc(var(--card-h) / 2); }
 	.stock-row .card:not(.dragging) .corner.bottom-right { display: none; }
 }
 
@@ -401,6 +402,7 @@ body{ padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset
 		height:calc(var(--card-h) / 3);
 		min-height:calc(var(--card-h) / 3);
 	}
+	.pile.foundation:empty::after { line-height: calc(var(--card-h) / 3); }
 	.stock-row .card:not(.dragging) .center { display: none; }
 }
 
@@ -414,3 +416,19 @@ html, body {
 /* bonus : cacher la scrollbar mais garder le scroll possible */
 body::-webkit-scrollbar { display: none; }   /* Chrome/Safari */
 body { -ms-overflow-style: none; scrollbar-width: none; } /* IE/Firefox */
+
+/* La carte devient un conteneur “size” */
+.card{
+  container-type: size;        /* Safari/Chrome/FF récents */
+  overflow: hidden;            /* on coupe proprement si besoin */
+}
+
+/* Si la hauteur rendue de la carte est petite, on enlève l’angle retourné */
+@container (max-height: 120px){
+  .corner.bottom-right{ display: none; }
+}
+
+/* Optionnel: encore plus petit → cacher aussi le symbole central */
+@container (max-height: 90px){
+  .center{ display: none; }
+}

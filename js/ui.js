@@ -254,6 +254,7 @@ function highlightMove(move){
 		el: target,
 		els: stack,
 		startX: p.x, startY: p.y,
+		baseRect: baseRect,
 		ox: p.x - baseRect.left,
 		oy: p.y - baseRect.top,
 		offsets: snapshots.map(s => s.dy), // pour onDragMove
@@ -279,7 +280,7 @@ function highlightMove(move){
 	  const p = pointFromEvent(ev);
 
 	  drag.els.forEach((el, i) => { 
-		moveTo(el, p.x - drag.ox, (p.y - drag.oy + drag.offsets[i]));
+		moveTo(el, p.x - drag.startX + drag.baseRect.left, (p.y - drag.startY + drag.baseRect.top + drag.offsets[i]));
 	  });
 	}
 

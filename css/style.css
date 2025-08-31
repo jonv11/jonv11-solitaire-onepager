@@ -368,3 +368,49 @@ output{ font-variant-numeric: tabular-nums }
   -ms-user-select: none;          /* vieux IE/Edge */
   touch-action: none;             /* évite scroll/zoom pendant drag */
 }
+
+/* Fit-7: les 7 colonnes tiennent toujours en largeur d’écran */
+:root{
+  --gap: clamp(6px, 2vw, 12px);
+  --card-w: calc((100vw - 8*var(--gap)) / 7);   /* 7 colonnes + 8 gaps */
+  --card-h: calc(var(--card-w) * 1.4);          /* ratio 2.5x3.5 ~ 1:1.4 */
+}
+
+/* La grille suit --card-w */
+.game{ max-width: 100vw; margin: 0 auto; padding: var(--gap); }
+.stock-row{ display:grid; grid-template-columns: repeat(7, var(--card-w)); gap: var(--gap); }
+.tableau{ display:grid; grid-template-columns: repeat(7, var(--card-w)); gap: var(--gap); }
+
+/* Confort iOS (encoches, barres) */
+body{ padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+.pile, .card{ touch-action: none; user-select: none; }
+.card .center { font-size: calc(var(--card-w) * 0.6); }
+
+/* Compact mode for short landscape screens */
+@media (max-height: 480px) and (orientation: landscape){
+	.stock-row .card:not(.dragging), .stock-row .pile, .stock-row .spacer {
+		height:calc(var(--card-h) / 2);
+		min-height:calc(var(--card-h) / 2);
+	}
+	.stock-row .card:not(.dragging) .corner.bottom-right { display: none; }
+}
+
+/* Even tighter mode: show only the top third */
+@media (max-height: 380px) and (orientation: landscape){
+	.stock-row .card:not(.dragging), .stock-row .pile, .stock-row .spacer {
+		height:calc(var(--card-h) / 3);
+		min-height:calc(var(--card-h) / 3);
+	}
+	.stock-row .card:not(.dragging) .center { display: none; }
+}
+
+html, body {
+  overflow: hidden;       /* supprime scroll horizontal et vertical */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* bonus : cacher la scrollbar mais garder le scroll possible */
+body::-webkit-scrollbar { display: none; }   /* Chrome/Safari */
+body { -ms-overflow-style: none; scrollbar-width: none; } /* IE/Firefox */

@@ -5,6 +5,13 @@
 */
 (() => {
   'use strict';
+  
+  // Disable zoom on mobile browsers
+  document.addEventListener('touchstart', (event) => {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
 
   // ---------- Utilities
   const $ = (sel, root = document) => root.querySelector(sel);

@@ -15,4 +15,5 @@
 - Infinite score and improved symbol sizes
 - Highlighting issue when selecting cards
 - Card teleportation during drag-and-drop
+- Hint suggestions now skip redundant moves (e.g., king to empty tableau)
 - GitHub Pages settings for deployment

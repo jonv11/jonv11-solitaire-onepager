@@ -13,7 +13,7 @@ Each item is marked with a checkbox for clarity.
 - [x] Move validation (tableau, foundations, waste).
 - [x] Score and move counter tracking.
 - [x] Local persistence of settings and saved game (Store).
-- [ ] Undo/Redo stack with multiple levels.
+- [x] Undo/Redo stack with multiple levels.
 - [ ] Auto move with animation when one or multiple cards can be added to foundations.
 
 ---
@@ -46,7 +46,7 @@ Each item is marked with a checkbox for clarity.
 - [x] Clip tableau stacks (half/third cards) in landscape with limited height.
 - [x] Disable text selection and scrolling on cards.
 - [x] Responsive `.center` sizing for suit symbol.
-- [ ] Double-tap shortcut (auto-move card to foundation).
+- [x] Double-tap shortcut (auto-move card to foundation).
 - [ ] Haptic feedback on move (where supported).
 - [ ] Optimize viewport, card size, and vertical gap for visibility in worst-case tableau (6 face-down, 12 face-up cards).
 

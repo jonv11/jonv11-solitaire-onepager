@@ -5,6 +5,7 @@
 - Icons displayed on foundation piles
 - Win celebration animation when a game is completed
 - Auto-complete option to finish when only foundation moves remain
+- Cards visibly travel from source to foundation during auto-complete when animations are enabled
 
 ### Changed
 - Harmonized event system

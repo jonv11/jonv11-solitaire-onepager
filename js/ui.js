@@ -205,6 +205,52 @@ function highlightMove(move){
   setTimeout(()=>{ srcEl?.classList.remove('hint'); dstEl?.classList.remove('valid-target'); dstPile?.classList.remove('valid-target'); }, 1500);
 }
 
+/**
+ * Animate a card flying from its source pile to a destination pile.
+ * This helper clones the DOM node so the real card can remain in place
+ * until the Engine updates the state. The clone is positioned using a
+ * simple FLIP (First, Last, Invert, Play) transition.
+ * @param {{srcPileId:string, cardIndex:number, dstPileId:string}} move
+ * @param {number} [ms=200] duration of the animation
+ * @returns {Promise<void>} resolves once the animation finishes
+ */
+function animateMove(move, ms = 200){
+  return new Promise(resolve => {
+    const srcPile = document.getElementById(move.srcPileId);
+    const dstPile = document.getElementById(move.dstPileId);
+    const srcEl = srcPile?.querySelectorAll('.card')[move.cardIndex];
+    if (!srcEl || !dstPile){ resolve(); return; }
+
+    // Starting and ending geometry
+    const start = srcEl.getBoundingClientRect();
+    const end   = dstPile.getBoundingClientRect();
+
+    // Clone the card so the original can be hidden during the flight
+    const ghost = srcEl.cloneNode(true);
+    ghost.style.position = 'fixed';
+    ghost.style.left = start.left + 'px';
+    ghost.style.top  = start.top + 'px';
+    ghost.style.margin = '0';
+    ghost.style.transition = `transform ${ms}ms ease`;
+    document.body.appendChild(ghost);
+    srcEl.style.visibility = 'hidden';
+
+    // Play the animation on the next frame
+    requestAnimationFrame(() => {
+      const dx = end.left - start.left;
+      const dy = end.top  - start.top;
+      ghost.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+
+    // Cleanup after the animation completes
+    setTimeout(() => {
+      ghost.remove();
+      srcEl.style.visibility = '';
+      resolve();
+    }, ms);
+  });
+}
+
 
 
     // ---------- Click interactions
@@ -397,7 +443,7 @@ function onCardDoubleClick(e){
 }
 
 
-    return { ...api, init, render, toast, applyDeltas, updateStatus, highlightMove, winAnimation };
+    return { ...api, init, render, toast, applyDeltas, updateStatus, highlightMove, winAnimation, animateMove };
   })();
 
   window.UI = UI;

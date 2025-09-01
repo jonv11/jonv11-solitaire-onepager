@@ -171,9 +171,17 @@
       const step = () => {
         const move = Engine.findHint && Engine.findHint();
         if (move && move.dstPileId.startsWith("foundation")){
-          Engine.move(move);
-          const delay = settings.animations ? 200 : 0;
-          setTimeout(step, delay);
+          // When animations are enabled, visually move the card first
+          if (settings.animations && UI.animateMove){
+            UI.animateMove(move).then(() => {
+              Engine.move(move);
+              setTimeout(step, 0); // next step immediately after rendering
+            });
+          } else {
+            Engine.move(move);
+            const delay = settings.animations ? 200 : 0;
+            setTimeout(step, delay);
+          }
         }
       };
 

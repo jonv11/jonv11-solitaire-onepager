@@ -12,7 +12,7 @@ Klondike Solitaire implemented as a single-page web app. No backend. Offline-cap
 - Draw-1 or Draw-3 modes. Optional redeal limits.
 - Undo/Redo with incremental DOM patching.
 - Scoring: Standard and Vegas.
-- Hints and optional auto-complete.
+- Hints and optional auto-complete (auto-finish remaining foundation moves when a win is guaranteed).
 - Persistent settings and stats in `localStorage` with cookie fallback.
 - One HTML file, split CSS/JS, no frameworks required.
 
@@ -53,6 +53,12 @@ All 52 cards placed on foundations.
 - **Mobile/Tablet**
   - Drag a card or valid sequence onto a legal target.
   - Double-tap to auto-move to foundation.
+
+---
+
+## Auto-complete
+
+When a win is certain and only moves to the foundations remain, the game can finish for you. Press the **Auto** button or `A` key to trigger automatic play-out. The engine then moves every remaining card to its foundation in order—similar to "auto-finish" in classic Solitaire apps—granting any time bonus and ending the round without further input.
 
 ---
 
@@ -240,7 +246,7 @@ Protect `main` with required status checks and 1 review.
 
 - Drag-and-drop with rollback when illegal.
 - Undo/Redo for all actions including settings changes.
-- Hints and auto-complete.
+- Hints and auto-complete for finishing when only foundation moves remain.
 - Vegas and Standard scoring, timer, and stats UI.
 - Left-hand mode, draw-1/draw-3, redeal policies.
 - GitHub Pages deployment.

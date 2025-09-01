@@ -84,7 +84,9 @@
       if (pile.kind === 'waste' && i !== pile.cards.length-1) allow = false;
       if (allow){
         el.addEventListener('pointerdown', onDragStart);
-		el.addEventListener('pointerup', onCardTap);
+                el.addEventListener('pointerup', onCardTap);
+                // Desktop users expect a native double-click to auto-move
+                el.addEventListener('dblclick', onCardDoubleClick);
       }
       return el;
     }
@@ -366,21 +368,32 @@ function highlightMove(move){
       };
     }
 	
-// Double-tap detection
+// Double-activation helpers
 let lastTap = 0;
-function onCardTap(e){
-  const now = Date.now();
-  if (now - lastTap < 300) {   // 300ms threshold
-    e.preventDefault();
-    const el = e.currentTarget;
-    const pileEl = el.closest('.pile');
-    const srcPileId = pileElToId(pileEl);
-    const cardIndex = Array.from(pileEl.querySelectorAll('.card')).indexOf(el);
 
-    // Ask engine to auto-move this card to its foundation
-    Engine.autoMoveOne?.({ srcPileId, cardIndex });
+function autoMoveFromCard(el){
+  const pileEl = el.closest('.pile');
+  const srcPileId = pileElToId(pileEl);
+  const cardIndex = Array.from(pileEl.querySelectorAll('.card')).indexOf(el);
+  // Ask engine to auto-move this card to its foundation
+  Engine.autoMoveOne?.({ srcPileId, cardIndex });
+}
+
+function onCardTap(e){
+  // Pointer events with type "touch" emulate double-tap for mobile
+  if (e.pointerType && e.pointerType !== 'touch') return;
+  const now = Date.now();
+  if (now - lastTap < 500) {   // 500ms threshold for human double taps
+    e.preventDefault();
+    autoMoveFromCard(e.currentTarget);
   }
   lastTap = now;
+}
+
+function onCardDoubleClick(e){
+  // Native desktop double-click handler
+  e.preventDefault();
+  autoMoveFromCard(e.currentTarget);
 }
 
 

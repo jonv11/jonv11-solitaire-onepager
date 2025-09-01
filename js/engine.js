@@ -191,18 +191,38 @@ function findHint(){
     for (let i=0; i<t.cards.length; i++){
       if (!t.cards[i].faceUp) continue;
       const c = t.cards[i];
-	  if(i === t.cards.length - 1) {
+
+      // try moving single card to foundation when on top
+      if (i === t.cards.length - 1){
         for (const f of state.piles.foundations){
           if (Model.canDropOnFoundation(c, top(f), f.suit))
             return { srcPileId:t.id, cardIndex:i, dstPileId:f.id };
         }
-	  }
-	  if (i > 0 && t.cards[i - 1].faceUp) continue;
+      }
+
+      // only consider the first face-up run in a tableau
+      if (i > 0 && t.cards[i - 1].faceUp) continue;
+
       for (let tj=0; tj<state.piles.tableau.length; tj++){
-        if (ti===tj) continue;
-		// TODO: avoid moving king at level 0
-        if (Model.canDropOnTableau(c, top(state.piles.tableau[tj])))
-          return { srcPileId:t.id, cardIndex:i, dstPileId:state.piles.tableau[tj].id };
+        if (ti === tj) continue;
+        const dstPile = state.piles.tableau[tj];
+        const dstTop = top(dstPile);
+
+        // skip moving a king pile with no hidden cards to another empty tableau
+        if (!dstTop && c.rank === 13 && i === 0) continue;
+
+        // skip moves where destination card is identical in rank and color
+        const prev = i > 0 ? t.cards[i - 1] : null;
+        const sameColor = (a, b) => {
+          const red = a === 'H' || a === 'D';
+          const redB = b === 'H' || b === 'D';
+          return red === redB;
+        };
+        if (prev && dstTop && prev.rank === dstTop.rank && sameColor(prev.suit, dstTop.suit))
+          continue;
+
+        if (Model.canDropOnTableau(c, dstTop))
+          return { srcPileId:t.id, cardIndex:i, dstPileId:dstPile.id };
       }
     }
   }

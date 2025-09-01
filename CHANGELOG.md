@@ -17,3 +17,4 @@
 - Card teleportation during drag-and-drop
 - Hint suggestions now skip redundant moves (e.g., king to empty tableau)
 - GitHub Pages settings for deployment
+- Redeal limits now enforced for 1 or 3 redeal options

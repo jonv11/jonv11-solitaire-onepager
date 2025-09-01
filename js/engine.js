@@ -11,6 +11,15 @@
     let undoStack = [];
     let redoStack = [];
 
+    // Parse a redeal policy string and return the allowed count
+    // "unlimited" -> Number.MAX_SAFE_INTEGER, "none" -> 0, "limited(n)" -> n
+    function parseRedeals(policy){
+      if (policy === "unlimited") return Number.MAX_SAFE_INTEGER;
+      if (policy === "none") return 0;
+      const m = /limited\((\d+)\)/.exec(policy);
+      return m ? Number(m[1]) : 0;
+    }
+
     function cloneState(st){ return JSON.parse(JSON.stringify(st)); }
 
     function pushUndo(){
@@ -52,14 +61,16 @@
 	  return false;
 	}
 
-	function canDraw(st){
-	  if (st.piles.stock.cards.length) return true;
-	  if (!st.piles.waste.cards.length) return false;
-	  // autorisé à reconstituer le stock ?
-	  if (st.settings.redealPolicy === "none") return false;
-	  // si tu gères des limites: lire un compteur redealsRestant > 0
-	  return true;
-	}
+        function canDraw(st){
+          if (st.piles.stock.cards.length) return true;
+          if (!st.piles.waste.cards.length) return false;
+          // allowed to restock from waste?
+          if (st.settings.redealPolicy === "none") return false;
+          if (st.settings.redealPolicy.startsWith("limited")){
+            return (st.redealsRemaining || 0) > 0;
+          }
+          return true;
+        }
 
 	function isStuck(st){
 	  return !isWin(st) && !hasAnyLegalMove(st) && !canDraw(st);
@@ -114,6 +125,8 @@
     // ---------- Public
     function newGame(settings){
       state = Model.deal(Math.floor(Math.random()*1e9), settings);
+      // initialize redeal counter based on policy
+      state.redealsRemaining = parseRedeals(settings.redealPolicy);
       undoStack = [];
       redoStack = [];
       emit();
@@ -130,9 +143,11 @@
       for (let i=0;i<n;i++){
         if (!state.piles.stock.cards.length){
           // redeal
-          if (state.piles.waste.cards.length && state.settings.redealPolicy!=="none"){
+          if (state.piles.waste.cards.length && state.settings.redealPolicy!=="none" &&
+              (state.settings.redealPolicy === "unlimited" || state.redealsRemaining > 0)){
             state.piles.stock.cards = state.piles.waste.cards.reverse().map(c=>({...c,faceUp:false}));
             state.piles.waste.cards = [];
+            if (state.settings.redealPolicy.startsWith("limited")) state.redealsRemaining--;
           } else break;
         }
         const c = state.piles.stock.cards.pop();

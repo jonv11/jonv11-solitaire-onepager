@@ -3,6 +3,7 @@
 ### Added
 - Initial HTML, CSS, and JS files for the Solitaire game
 - Icons displayed on foundation piles
+- Auto-complete option to finish when only foundation moves remain
 
 ### Changed
 - Harmonized event system

@@ -154,7 +154,7 @@
   /** @param {number} r */
   function rankToText(r){ return ({1:'A',11:'J',12:'Q',13:'K'})[r] || String(r); }
   /** @param {Suit} s */
-  function suitToChar(s){ return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s]; }
+  function suitToChar(s){ return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || "?"; }
 
   /** Build a fresh dealt Klondike layout using seed and settings */
   function deal(seed, settings){

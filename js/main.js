@@ -117,6 +117,14 @@
     }
     function stopTimer(){ if (timerId) { clearInterval(timerId); timerId = 0; } }
 
+    // Toggle visibility of action buttons (undo/redo/hint)
+    function setActionButtonsVisible(show){
+      const display = show ? "" : "none";
+      [refs.btnUndo, refs.btnRedo, refs.btnHint].forEach(btn => {
+        if (btn) btn.style.display = display;
+      });
+    }
+
     function newGame(){
       readSettingsFromControls();
       const st = Engine.newGame ? Engine.newGame(settings) : null;
@@ -124,6 +132,8 @@
         UI.render(st);
         updateStatus(st);
         Store.saveState(st);
+        if (refs.time) refs.time.textContent = "Time: 00:00"; // reset timer display
+        setActionButtonsVisible(true); // show buttons for new game
         startTimer();
       }
     }
@@ -150,8 +160,12 @@
       if (refs.time) refs.time.textContent = "Time: " + formatTime(time.elapsedMs);
     });
 	
-	Engine.on && Engine.on("win",  () => UI.toast("You win!"));
-	Engine.on && Engine.on("stuck",() => UI.toast("No moves. Stuck."));
+        Engine.on && Engine.on("win",  () => {
+          stopTimer();                 // freeze timer at win time
+          setActionButtonsVisible(false); // hide undo/redo/hint buttons
+          UI.toast("You win!");       // notify player
+        });
+        Engine.on && Engine.on("stuck",() => UI.toast("No moves. Stuck."));
 
 
     return { newGame, draw, undo, redo, hint, autoComplete, applySettingsToControls };

@@ -8,6 +8,7 @@
 - Harmonized event system
 - Various adjustments and addition of in-game hints
 - Card resizing for small screens and timer fix
+- Timer stops and undo/redo/hint buttons hide on win; reset on new game
 
 ### Fixed
 - Event handling on mobile

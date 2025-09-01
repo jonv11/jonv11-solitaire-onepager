@@ -114,9 +114,8 @@ It follows a **modular MVC-inspired design**:
 
 ## Known Trade-offs
 
-- No undo/redo stack yet (placeholder in controller).  
-- AI auto-win detection could be extended to detect forced wins.  
-- Double-tap on mobile is emulated, since native `dblclick` is unreliable on touch devices.  
+- AI auto-win detection could be extended to detect forced wins.
+- Double-tap on mobile is emulated, since native `dblclick` is unreliable on touch devices.
 
 ---
 

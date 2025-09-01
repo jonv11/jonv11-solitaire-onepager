@@ -18,17 +18,17 @@
       <button id="hint" class="btn" aria-label="Show a hint">Hint</button>
       <button style="display:none;" id="auto" class="btn" aria-label="Auto-complete when safe">Auto</button>
 	  
-      <details id="opts" class="opts" style="display:none;">
+      <details id="opts" class="opts">
         <summary class="btn" aria-controls="opts-panel" aria-expanded="false">Options</summary>
         <div id="opts-panel" class="opts-panel">
-          <div class="select" style="display:none;">
+          <div class="select">
             <label for="drawCount">Draw</label>
             <select id="drawCount" aria-label="Draw count">
               <option value="1">1</option>
               <option value="3" selected>3</option>
             </select>
           </div>
-          <div class="select" style="display:none;">
+          <div class="select">
             <label for="redealPolicy">Redeal</label>
             <select id="redealPolicy" aria-label="Redeal policy">
               <option value="unlimited" selected>Unlimited</option>
@@ -37,7 +37,7 @@
               <option value="none">None</option>
             </select>
           </div>
-          <div class="toggle" style="display:none;">
+          <div class="toggle">
             <input type="checkbox" id="leftHandMode" />
             <label for="leftHandMode">Left-hand</label>
           </div>
@@ -49,11 +49,11 @@
             <input type="checkbox" id="autoComplete" checked />
             <label for="autoComplete">Auto</label>
           </div>
-          <div class="toggle" style="display:none;">
+          <div class="toggle">
             <input type="checkbox" id="animations" checked />
             <label for="animations">Anim</label>
           </div>
-          <div class="toggle" style="display:none;">
+          <div class="toggle">
             <input type="checkbox" id="sound" />
             <label for="sound">Sound</label>
           </div>

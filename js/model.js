@@ -48,14 +48,15 @@
    */
 
   /**
-   * @typedef {Object} GameState
-   * @property {number} seed
-   * @property {{ tableau: Pile[]; foundations: Pile[]; stock: Pile; waste: Pile; }} piles
-   * @property {Settings} settings
-   * @property {ScoreState} score
-   * @property {Array<UndoDelta>} history
-   * @property {{ startedAt: number; elapsedMs: number; }} time
-   */
+  * @typedef {Object} GameState
+  * @property {number} seed
+  * @property {{ tableau: Pile[]; foundations: Pile[]; stock: Pile; waste: Pile; }} piles
+  * @property {Settings} settings
+  * @property {ScoreState} score
+   * @property {number} redealsRemaining         // redeals left (Number.MAX_SAFE_INTEGER for unlimited)
+  * @property {Array<UndoDelta>} history
+  * @property {{ startedAt: number; elapsedMs: number; }} time
+  */
 
   /**
    * @typedef {Object} UndoDelta    // Small mutation unit for DOM patching

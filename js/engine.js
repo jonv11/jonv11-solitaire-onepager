@@ -8,6 +8,18 @@
   const Engine = (() => {
     const api = EventEmitter();
     let state = null;
+    let undoStack = [];
+    let redoStack = [];
+
+    function cloneState(st){ return JSON.parse(JSON.stringify(st)); }
+
+    function pushUndo(){
+      if (!state) return;
+      state.time.elapsedMs = Date.now() - state.time.startedAt;
+      undoStack.push(cloneState(state));
+      if (undoStack.length > 100) undoStack.shift();
+      redoStack.length = 0;
+    }
 	
 	// ---- END CONDITION	
 	function isWin(st){
@@ -102,8 +114,10 @@
     // ---------- Public
     function newGame(settings){
       state = Model.deal(Math.floor(Math.random()*1e9), settings);
+      undoStack = [];
+      redoStack = [];
       emit();
-	  endCheck();
+          endCheck();
       return state;
     }
 
@@ -111,6 +125,7 @@
 
     function draw(){
       if (!state) return;
+      pushUndo();
       const n = state.settings.drawCount || 1;
       for (let i=0;i<n;i++){
         if (!state.piles.stock.cards.length){
@@ -127,7 +142,7 @@
       }
       state.score.moves++;
       emit();
-	  endCheck();
+          endCheck();
     }
 
     /** @param {{srcPileId:string, cardIndex:number, dstPileId:string}} move */
@@ -139,7 +154,7 @@
       const cards = src.cards.slice(cardIndex);
       if (!cards.length) return;
       if (!canMoveCard(cards[0], dst)) return;
-
+      pushUndo();
       dst.cards.push(...cards);
       src.cards.length = cardIndex;
       flipIfNeeded(src);
@@ -150,7 +165,7 @@
       state.score.moves++;
 
       emit();
-	  endCheck();
+          endCheck();
     }
 	
 function findHint(){
@@ -209,6 +224,24 @@ function findHint(){
       state.time.elapsedMs = Date.now() - state.time.startedAt;
       api.emit("tick", state.time);
     }
+
+    function undo(){
+      if (!undoStack.length || !state) return;
+      redoStack.push(cloneState(state));
+      state = undoStack.pop();
+      state.time.elapsedMs = Date.now() - state.time.startedAt;
+      emit();
+          endCheck();
+    }
+
+    function redo(){
+      if (!redoStack.length || !state) return;
+      undoStack.push(cloneState(state));
+      state = redoStack.pop();
+      state.time.elapsedMs = Date.now() - state.time.startedAt;
+      emit();
+          endCheck();
+    }
 	
 function autoMoveOne({srcPileId, cardIndex}){
   const src = pileById(srcPileId);
@@ -226,7 +259,7 @@ function autoMoveOne({srcPileId, cardIndex}){
 }
 
 
-    return { ...api, newGame, getState, draw, move, tick, findHint, autoMoveOne };
+    return { ...api, newGame, getState, draw, move, tick, findHint, autoMoveOne, undo, redo };
   })();
 
   window.Engine = Engine;

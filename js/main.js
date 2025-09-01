@@ -129,8 +129,8 @@
     }
 
     function draw(){ Engine.draw && Engine.draw(); }
-    function undo(){ /* to be implemented with Engine */ }
-    function redo(){ /* to be implemented with Engine */ }
+    function undo(){ Engine.undo && Engine.undo(); }
+    function redo(){ Engine.redo && Engine.redo(); }
 	function hint(){
 	  const move = Engine.findHint && Engine.findHint();
 	  if (move) UI.highlightMove(move);

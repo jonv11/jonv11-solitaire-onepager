@@ -14,7 +14,7 @@ Each item is marked with a checkbox for clarity.
 - [x] Score and move counter tracking.
 - [x] Local persistence of settings and saved game (Store).
 - [ ] Undo/Redo stack with multiple levels.
-- [ ] Animated auto-move of cards to foundation.
+- [ ] Auto move with animation when one or multiple cards can be added to foundations.
 
 ---
 
@@ -37,6 +37,7 @@ Each item is marked with a checkbox for clarity.
 - [x] Victory / Stuck banner (top fixed, fading).
 - [ ] End-of-game modal with summary and quick actions.
 - [ ] Improved animations for move/auto/hint highlights.
+- [ ] Better settings UI.
 
 ---
 
@@ -47,6 +48,7 @@ Each item is marked with a checkbox for clarity.
 - [x] Responsive `.center` sizing for suit symbol.
 - [ ] Double-tap shortcut (auto-move card to foundation).
 - [ ] Haptic feedback on move (where supported).
+- [ ] Optimize viewport, card size, and vertical gap for visibility in worst-case tableau (6 face-down, 12 face-up cards).
 
 ---
 

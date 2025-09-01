@@ -1,138 +1,205 @@
-
 /* jonv11-solitaire-onepager - css/style.css
    Visual target: classic Klondike on green felt. Mobile-friendly.
    HTML contract: piles with ids/#classes per index.html. Cards created by JS.
 */
 
-:root{
+:root {
   /* Layout */
   --gap: 12px;
-  --card-w: 140px;              /* ~2.5x3.5in aspect */
+  --card-w: 140px; /* ~2.5x3.5in aspect */
   --card-h: 196px;
   --radius: 10px;
   --line: 2px;
 
   /* Overlaps */
-  --tab-overlap: 28px;          /* vertical fan for tableau */
-  --waste-overlap: 4px;        /* horizontal fan for waste */
+  --tab-overlap: 28px; /* vertical fan for tableau */
+  --waste-overlap: 4px; /* horizontal fan for waste */
 
   /* Colors */
-  --felt-1:#0f6d30;
-  --felt-2:#0c5b2a;
-  --felt-3:#0a4d24;
-  --outline:#6ac68c;
-  --pile-border: rgba(255,255,255,.35);
-  --pile-empty: rgba(255,255,255,.14);
-  --shadow: rgba(0,0,0,.25);
-  --card-front:#ffffff;
-  --card-edge:#e6e6e6;
-  --card-face:#fdfdfd;
-  --red:#d22;
-  --black:#111;
-  --hint:#ffcc00;
+  --felt-1: #0f6d30;
+  --felt-2: #0c5b2a;
+  --felt-3: #0a4d24;
+  --outline: #6ac68c;
+  --pile-border: rgba(255, 255, 255, 0.35);
+  --pile-empty: rgba(255, 255, 255, 0.14);
+  --shadow: rgba(0, 0, 0, 0.25);
+  --card-front: #ffffff;
+  --card-edge: #e6e6e6;
+  --card-face: #fdfdfd;
+  --red: #d22;
+  --black: #111;
+  --hint: #ffcc00;
 }
 
 /* ===== Base ===== */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font:400 16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  color:#fff;
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font:
+    400 16px/1.4 system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+  color: #fff;
   background:
-    radial-gradient(circle at 30% 20%, rgba(255,255,255,.06), transparent 35%),
-    radial-gradient(circle at 70% 80%, rgba(0,0,0,.15), transparent 40%),
-    radial-gradient(1200px 800px at 50% 100%, var(--felt-1), var(--felt-2) 60%, var(--felt-3) 100%);
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(255, 255, 255, 0.06),
+      transparent 35%
+    ),
+    radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.15), transparent 40%),
+    radial-gradient(
+      1200px 800px at 50% 100%,
+      var(--felt-1),
+      var(--felt-2) 60%,
+      var(--felt-3) 100%
+    );
   background-color: var(--felt-2);
-  user-select:none;
+  user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-header, footer{padding:8px 12px}
-h1{margin:0;font-size:20px;font-weight:600}
+header,
+footer {
+  padding: 8px 12px;
+}
+h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
 
 /* ===== Board layout ===== */
-.game{display:grid; gap:var(--gap); padding:var(--gap); max-width:1200px; margin:0 auto}
-.stock-row{
-  display:grid;
-  grid-template-columns: var(--card-w) 1fr var(--card-w) auto;
-  gap:var(--gap);
-  align-items:start;
+.game {
+  display: grid;
+  gap: var(--gap);
+  padding: var(--gap);
+  max-width: 1200px;
+  margin: 0 auto;
 }
-.foundations{display:grid; grid-auto-flow:column; gap:var(--gap); justify-content:end}
-.tableau{display:grid; grid-template-columns: repeat(7, var(--card-w)); gap:var(--gap)}
+.stock-row {
+  display: grid;
+  grid-template-columns: var(--card-w) 1fr var(--card-w) auto;
+  gap: var(--gap);
+  align-items: start;
+}
+.foundations {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--gap);
+  justify-content: end;
+}
+.tableau {
+  display: grid;
+  grid-template-columns: repeat(7, var(--card-w));
+  gap: var(--gap);
+}
 
 /* ===== Piles ===== */
-.pile{
-  position:relative;
-  width:var(--card-w);
-  min-height:var(--card-h);
+.pile {
+  position: relative;
+  width: var(--card-w);
+  min-height: var(--card-h);
   border: var(--line) dashed var(--pile-empty);
   border-radius: var(--radius);
   outline: none;
 }
-.pile:not(:empty){ border-color: transparent }
-
+.pile:not(:empty) {
+  border-color: transparent;
+}
 
 /* Drop target highlight */
-.pile.is-target{ box-shadow: 0 0 0 3px var(--outline) inset }
-.pile.invalid{ box-shadow: 0 0 0 3px #d33 inset }
-/* Valid drop targets highlight */
-.pile.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 18px rgba(255,255,255,.25) inset; }
-.card.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 18px rgba(255,255,255,.25) inset; }
-.pile.valid-target.foundation:empty::after{
-  /* stronger suit hint when valid */
-  opacity: .55;
+.pile.is-target {
+  box-shadow: 0 0 0 3px var(--outline) inset;
 }
-
+.pile.invalid {
+  box-shadow: 0 0 0 3px #d33 inset;
+}
+/* Valid drop targets highlight */
+.pile.valid-target {
+  box-shadow:
+    0 0 0 3px var(--outline) inset,
+    0 0 18px rgba(255, 255, 255, 0.25) inset;
+}
+.card.valid-target {
+  box-shadow:
+    0 0 0 3px var(--outline) inset,
+    0 0 18px rgba(255, 255, 255, 0.25) inset;
+}
+.pile.valid-target.foundation:empty::after {
+  /* stronger suit hint when valid */
+  opacity: 0.55;
+}
 
 /* Placeholder for empty foundations */
-#foundation-S:empty::after{
+#foundation-S:empty::after {
   content: "♠";
 }
-#foundation-H:empty::after{
+#foundation-H:empty::after {
   content: "♥";
 }
-#foundation-D:empty::after{
+#foundation-D:empty::after {
   content: "♦";
 }
-#foundation-C:empty::after{
+#foundation-C:empty::after {
   content: "♣";
 }
-.pile.foundation:empty::after{
-  position:absolute; inset:6px;
-  display:grid; place-items:center;
-  font-weight:700; font-size: clamp(28px, 8vw, 56px);
-  color: rgba(255,255,255,.25);
+.pile.foundation:empty::after {
+  position: absolute;
+  inset: 6px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: clamp(28px, 8vw, 56px);
+  color: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius);
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(1px);
 }
 
 /* ===== Cards ===== */
-.card{
-  width:var(--card-w); height:var(--card-h);
+.card {
+  width: var(--card-w);
+  height: var(--card-h);
   border-radius: calc(var(--radius) + 4px);
   box-shadow: 0 6px 16px var(--shadow);
-  position:absolute; top:0; left:0;
+  position: absolute;
+  top: 0;
+  left: 0;
   /* keep GPU-friendly transform only */
   transform-origin: top left;
-  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
   will-change: transform, top, left;
-  touch-action:none;
-  user-select:none;
-  -webkit-user-drag:none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 /* JS should set --i (0-based) for stacking in piles */
-.pile.tableau .card{ top: calc(var(--i,0) * var(--tab-overlap)) }
-.pile.waste .card{ left: calc(var(--i,0) * var(--waste-overlap)) }
+.pile.tableau .card {
+  top: calc(var(--i, 0) * var(--tab-overlap));
+}
+.pile.waste .card {
+  left: calc(var(--i, 0) * var(--waste-overlap));
+}
 
-.card.face-up{
-  background: linear-gradient(#fff,#fff) padding-box,
-              linear-gradient(#fff,#fff) border-box;
+.card.face-up {
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(#fff, #fff) border-box;
   border: 1px solid var(--card-edge);
 }
-.card.face-down{
+.card.face-down {
   /* Blue diagonal cross-hatch like classic backs */
   background:
     repeating-linear-gradient(45deg, #1e64ad 0 6px, #ffffff 6px 8px),
@@ -141,315 +208,556 @@ h1{margin:0;font-size:20px;font-weight:600}
 }
 
 /* Card inner layout (optional if JS injects .corner/.center) */
-.card .corner{
-  position:absolute; width:28px; text-align:center; line-height:1;
-  font-weight:700; font-size:24px; font-family: ui-monospace, Menlo, Consolas, monospace;
+.card .corner {
+  position: absolute;
+  width: 28px;
+  text-align: center;
+  line-height: 1;
+  font-weight: 700;
+  font-size: 24px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
 }
-.card .corner.top-left{ top:6px; left:6px }
-.card .corner.bottom-right{ bottom:6px; right:6px; transform: rotate(180deg) }
-.card .center{ position:absolute; inset:0; display:grid; place-items:center; font-size:64px; opacity:.9 }
+.card .corner.top-left {
+  top: 6px;
+  left: 6px;
+}
+.card .corner.bottom-right {
+  bottom: 6px;
+  right: 6px;
+  transform: rotate(180deg);
+}
+.card .center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 64px;
+  opacity: 0.9;
+}
 
 /* Suit coloring: apply to .corner and .center */
-.card[data-suit="H"] .corner, .card[data-suit="D"] .corner,
-.card[data-suit="H"] .center, .card[data-suit="D"] .center{ color: var(--red) }
-.card[data-suit="S"] .corner, .card[data-suit="C"] .corner,
-.card[data-suit="S"] .center, .card[data-suit="C"] .center{ color: var(--black) }
+.card[data-suit="H"] .corner,
+.card[data-suit="D"] .corner,
+.card[data-suit="H"] .center,
+.card[data-suit="D"] .center {
+  color: var(--red);
+}
+.card[data-suit="S"] .corner,
+.card[data-suit="C"] .corner,
+.card[data-suit="S"] .center,
+.card[data-suit="C"] .center {
+  color: var(--black);
+}
 
 /* Interaction states */
-.card.dragging{ transition: none; will-change: transform, left, top; cursor: grabbing; filter: drop-shadow(0 10px 24px rgba(0,0,0,.45)); z-index: 1000; }
-.card.lift{ transform: translateY(-4px) }
-.card.hint{ box-shadow: 0 0 0 3px var(--hint) inset, 0 8px 18px rgba(0,0,0,.35) }
+.card.dragging {
+  transition: none;
+  will-change: transform, left, top;
+  cursor: grabbing;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
+  z-index: 1000;
+}
+.card.lift {
+  transform: translateY(-4px);
+}
+.card.hint {
+  box-shadow:
+    0 0 0 3px var(--hint) inset,
+    0 8px 18px rgba(0, 0, 0, 0.35);
+}
 
 /* Focus and keyboard */
-.pile:focus-visible{ box-shadow: 0 0 0 3px rgba(255,255,255,.35) inset }
-.card:focus-visible{ outline: 3px solid var(--outline) }
+.pile:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35) inset;
+}
+.card:focus-visible {
+  outline: 3px solid var(--outline);
+}
 
 /* ===== Footer status ===== */
-footer{ display:flex; gap:8px; align-items:center; color:#e7ffe7; opacity:.9 }
-output{ font-variant-numeric: tabular-nums }
+footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #e7ffe7;
+  opacity: 0.9;
+}
+output {
+  font-variant-numeric: tabular-nums;
+}
 
 /* ===== Left-hand mode support (layout mirrored) ===== */
-.left-hand .game{ direction: rtl }
-.left-hand .pile .card{ left:auto; right:0 }
-.left-hand .pile.waste .card{ right: calc(var(--i,0) * var(--waste-overlap)); left:auto }
+.left-hand .game {
+  direction: rtl;
+}
+.left-hand .pile .card {
+  left: auto;
+  right: 0;
+}
+.left-hand .pile.waste .card {
+  right: calc(var(--i, 0) * var(--waste-overlap));
+  left: auto;
+}
 
 /* ===== Responsive ===== */
-@media (max-width: 1024px){
-  :root{ --card-w: 120px; --card-h: 168px; --tab-overlap: 26px; --waste-overlap: 2px; }
+@media (max-width: 1024px) {
+  :root {
+    --card-w: 120px;
+    --card-h: 168px;
+    --tab-overlap: 26px;
+    --waste-overlap: 2px;
+  }
 }
-@media (max-width: 900px){
-  :root{ --card-w: 106px; --card-h: 150px; --tab-overlap: 26px; --waste-overlap: 2px; --gap: 10px }
-  .stock-row{ grid-template-columns: var(--card-w) 1fr var(--card-w) auto }
+@media (max-width: 900px) {
+  :root {
+    --card-w: 106px;
+    --card-h: 150px;
+    --tab-overlap: 26px;
+    --waste-overlap: 2px;
+    --gap: 10px;
+  }
+  .stock-row {
+    grid-template-columns: var(--card-w) 1fr var(--card-w) auto;
+  }
 }
-@media (max-width: 720px){
-  :root{ --card-w: 92px; --card-h: 130px; --tab-overlap: 26px; --waste-overlap: 1px; }
-  .game{ padding: 10px }
+@media (max-width: 720px) {
+  :root {
+    --card-w: 92px;
+    --card-h: 130px;
+    --tab-overlap: 26px;
+    --waste-overlap: 1px;
+  }
+  .game {
+    padding: 10px;
+  }
 }
-@media (max-width: 600px){
-  :root{ --card-w: 78px; --card-h: 110px; --tab-overlap: 26px; --waste-overlap: 1px }
+@media (max-width: 600px) {
+  :root {
+    --card-w: 78px;
+    --card-h: 110px;
+    --tab-overlap: 26px;
+    --waste-overlap: 1px;
+  }
 }
-
-
 
 /* ===== Mobile-safe padding (notch etc.) ===== */
-@supports(padding:max(0px)) {
-  body { padding: env(safe-area-inset-top) env(safe-area-inset-right)
-                 env(safe-area-inset-bottom) env(safe-area-inset-left); }
+@supports (padding: max(0px)) {
+  body {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
 }
 
 /* ===== Compact cards: small screens (portrait) ===== */
-@media (max-width: 420px) and (orientation: portrait){
-  :root{
+@media (max-width: 420px) and (orientation: portrait) {
+  :root {
     --gap: 8px;
-    --card-w: 70px; --card-h: 100px;
-    --tab-overlap: 26px; --waste-overlap: 1px;
+    --card-w: 70px;
+    --card-h: 100px;
+    --tab-overlap: 26px;
+    --waste-overlap: 1px;
     --radius: 8px;
   }
-  .pile.foundation:empty::after{ font-size: clamp(22px, 10vw, 38px) }
-  .card{ box-shadow: 0 4px 10px var(--shadow) }
-  .card .corner{ font-size: 20px; width: 24px }
-  .card .center{ font-size: 52px }
-  .game{ padding: 8px; max-width: 100vw }
+  .pile.foundation:empty::after {
+    font-size: clamp(22px, 10vw, 38px);
+  }
+  .card {
+    box-shadow: 0 4px 10px var(--shadow);
+  }
+  .card .corner {
+    font-size: 20px;
+    width: 24px;
+  }
+  .card .center {
+    font-size: 52px;
+  }
+  .game {
+    padding: 8px;
+    max-width: 100vw;
+  }
 }
 
 /* ===== Ultra-compact: very narrow phones ===== */
-@media (max-width: 360px){
-  :root{
-    --card-w: 64px; --card-h: 92px;
-    --tab-overlap: 26px; --gap: 6px;
+@media (max-width: 360px) {
+  :root {
+    --card-w: 64px;
+    --card-h: 92px;
+    --tab-overlap: 26px;
+    --gap: 6px;
   }
-  .card .center{ font-size: 46px }
+  .card .center {
+    font-size: 46px;
+  }
 }
 
 /* ===== Landscape compaction: small height (iPhone landscape) ===== */
-@media (max-height: 430px) and (orientation: landscape){
-  :root{
+@media (max-height: 430px) and (orientation: landscape) {
+  :root {
     --gap: 6px;
-    --card-w: 68px; --card-h: 96px;      /* lighter footprint */
-    --tab-overlap: 26px; --waste-overlap: 1px;
-    --radius: 6px; --line: 1px;
+    --card-w: 68px;
+    --card-h: 96px; /* lighter footprint */
+    --tab-overlap: 26px;
+    --waste-overlap: 1px;
+    --radius: 6px;
+    --line: 1px;
   }
   /* Reduce visual weight, keep legibility */
-  .card{ box-shadow: 0 2px 6px rgba(0,0,0,.25) }
-  .card.face-up{ border-color: #ddd }
-  .card .corner{ font-size: 18px; width: 22px }
-  .card .center{ font-size: 44px }
+  .card {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  }
+  .card.face-up {
+    border-color: #ddd;
+  }
+  .card .corner {
+    font-size: 18px;
+    width: 22px;
+  }
+  .card .center {
+    font-size: 44px;
+  }
 
   /* Compress stacked backs: show depth without full cards */
-  .pile.tableau .card.face-down:not(:last-child){
+  .pile.tableau .card.face-down:not(:last-child) {
     height: 12px;
     border-radius: 4px;
-    background:
-      repeating-linear-gradient(45deg,#cfd7e6 0 4px,#eef2f8 4px 8px);
+    background: repeating-linear-gradient(
+      45deg,
+      #cfd7e6 0 4px,
+      #eef2f8 4px 8px
+    );
     border: 1px solid #c5ccdb;
   }
 
   /* Tighter grids */
-  .stock-row{ grid-template-columns: var(--card-w) 1fr var(--card-w) auto }
-  .tableau{ grid-template-columns: repeat(7, var(--card-w)) }
+  .stock-row {
+    grid-template-columns: var(--card-w) 1fr var(--card-w) auto;
+  }
+  .tableau {
+    grid-template-columns: repeat(7, var(--card-w));
+  }
 
   /* Scale board if overflow occurs, keep interactions stable */
-  .game{
-    transform: scale(.92);
+  .game {
+    transform: scale(0.92);
     transform-origin: top left;
-    width: calc(100% / .92);
+    width: calc(100% / 0.92);
   }
 }
 
 /* ===== Mid tablets in landscape ===== */
-@media (min-width: 721px) and (max-width: 1024px) and (orientation: landscape){
-  :root{
-    --card-w: 88px; --card-h: 128px;
-    --tab-overlap: 26px; --gap: 8px;
+@media (min-width: 721px) and (max-width: 1024px) and (orientation: landscape) {
+  :root {
+    --card-w: 88px;
+    --card-h: 128px;
+    --tab-overlap: 26px;
+    --gap: 8px;
   }
-  .card .corner{ font-size: 20px; width: 24px }
-  .card .center{ font-size: 54px }
+  .card .corner {
+    font-size: 20px;
+    width: 24px;
+  }
+  .card .center {
+    font-size: 54px;
+  }
 }
 
 /* ===== Touch clarity tweaks (all mobile) ===== */
-@media (hover: none) and (pointer: coarse){
-  .pile{ border-color: var(--pile-empty); }
+@media (hover: none) and (pointer: coarse) {
+  .pile {
+    border-color: var(--pile-empty);
+  }
   .pile.is-target,
-  .pile.valid-target{ box-shadow: 0 0 0 3px var(--outline) inset, 0 0 14px rgba(255,255,255,.2) inset }
-  .card{ touch-action: none } /* aligns with JS pointer events */
-  footer, header{ padding: 6px 8px; }
-  .btn, .select select, .toggle label{ font-size: 14px }
+  .pile.valid-target {
+    box-shadow:
+      0 0 0 3px var(--outline) inset,
+      0 0 14px rgba(255, 255, 255, 0.2) inset;
+  }
+  .card {
+    touch-action: none;
+  } /* aligns with JS pointer events */
+  footer,
+  header {
+    padding: 6px 8px;
+  }
+  .btn,
+  .select select,
+  .toggle label {
+    font-size: 14px;
+  }
 }
 
 /* ===== Prevent accidental scroll while interacting on small screens ===== */
-@media (max-width: 768px){
-  html, body{ overscroll-behavior: none }
-  .game{ max-width: 100vw; }
+@media (max-width: 768px) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+  .game {
+    max-width: 100vw;
+  }
 }
 
-
 /* collapsible options */
-.toolbar { gap: 8px; align-items: center; }
-.opts { display:inline-block; }
-.opts > summary.btn { list-style: none; cursor: pointer; }
-.opts > summary::-webkit-details-marker { display: none; }
-.opts[open] > summary { background: rgba(255,255,255,.08); }
+.toolbar {
+  gap: 8px;
+  align-items: center;
+}
+.opts {
+  display: inline-block;
+}
+.opts > summary.btn {
+  list-style: none;
+  cursor: pointer;
+}
+.opts > summary::-webkit-details-marker {
+  display: none;
+}
+.opts[open] > summary {
+  background: rgba(255, 255, 255, 0.08);
+}
 .opts-panel {
   margin-top: 8px;
   padding: 8px;
-  border: 1px solid rgba(255,255,255,.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 8px;
-  background: rgba(0,0,0,.15);
+  background: rgba(0, 0, 0, 0.15);
   display: grid;
   grid-auto-flow: row;
   gap: 8px;
 }
-@media (max-width: 900px){
-  .opts-panel { position: relative; }
+@media (max-width: 900px) {
+  .opts-panel {
+    position: relative;
+  }
 }
 
 /* same column grid for both rows */
-.game{ display:grid; gap:var(--gap); padding:var(--gap); max-width:calc(7*var(--card-w) + 8*var(--gap)); margin:0 auto; }
+.game {
+  display: grid;
+  gap: var(--gap);
+  padding: var(--gap);
+  max-width: calc(7 * var(--card-w) + 8 * var(--gap));
+  margin: 0 auto;
+}
 
 /* top row aligns to 7 columns */
-.stock-row{
-  display:grid;
+.stock-row {
+  display: grid;
   grid-template-columns: repeat(7, var(--card-w));
-  gap:var(--gap);
-  align-items:start;
+  gap: var(--gap);
+  align-items: start;
 }
 
 /* place items on specific columns */
-#stock{ grid-column: 1; }
-.spacer{ grid-column: 3; width: var(--card-w); height: var(--card-h); }
-#waste{ grid-column: 2; }
-.foundations{
-  grid-column: 4 / span 4;               /* columns 4–7 */
-  display:grid;
+#stock {
+  grid-column: 1;
+}
+.spacer {
+  grid-column: 3;
+  width: var(--card-w);
+  height: var(--card-h);
+}
+#waste {
+  grid-column: 2;
+}
+.foundations {
+  grid-column: 4 / span 4; /* columns 4–7 */
+  display: grid;
   grid-template-columns: repeat(4, var(--card-w));
-  gap:var(--gap);
-  justify-content:start;
+  gap: var(--gap);
+  justify-content: start;
 }
 
 /* bottom row already 7 columns */
-.tableau{ display:grid; grid-template-columns: repeat(7, var(--card-w)); gap:var(--gap); }
+.tableau {
+  display: grid;
+  grid-template-columns: repeat(7, var(--card-w));
+  gap: var(--gap);
+}
 
 /* Critical live banner */
 #live {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   padding: 10px 16px;
-  background: linear-gradient(180deg, #c62828, #b71c1c); /* rouge alerte */
+  background: linear-gradient(180deg, #c62828, #b71c1c); /* alert red */
   color: #fff;
   font-weight: 600;
   text-align: center;
-  letter-spacing: .2px;
-  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   z-index: 2000;
   pointer-events: none;
 
-  /* animé: caché par défaut */
+  /* animated: hidden by default */
   opacity: 0;
   transform: translateY(-100%);
-  transition: opacity .25s ease, transform .25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
-/* état visible */
+/* visible state */
 #live.show {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* variante info (optionnel) */
-#live.info { background: linear-gradient(180deg, #1565c0, #0d47a1); }
-#live.ok   { background: linear-gradient(180deg, #2e7d32, #1b5e20); }
-
-
-.card.hint{ box-shadow: 0 0 0 3px #ffcc00 inset, 0 0 12px #ffcc00; }
-
-.card, .pile {
-  user-select: none;              /* standard */
-  -webkit-user-select: none;      /* Safari / iOS */
-  -ms-user-select: none;          /* vieux IE/Edge */
-  touch-action: none;             /* évite scroll/zoom pendant drag */
+/* info variant (optional) */
+#live.info {
+  background: linear-gradient(180deg, #1565c0, #0d47a1);
+}
+#live.ok {
+  background: linear-gradient(180deg, #2e7d32, #1b5e20);
 }
 
-/* Fit-7: les 7 colonnes tiennent toujours en largeur d’écran */
-:root{
+.card.hint {
+  box-shadow:
+    0 0 0 3px #ffcc00 inset,
+    0 0 12px #ffcc00;
+}
+
+.card,
+.pile {
+  user-select: none; /* standard */
+  -webkit-user-select: none; /* Safari / iOS */
+  -ms-user-select: none; /* old IE/Edge */
+  touch-action: none; /* prevent scroll/zoom during drag */
+}
+
+/* Fit-7: ensure all 7 columns fit screen width */
+:root {
   --gap: clamp(6px, 2vw, 12px);
-  --card-w: calc((100vw - 8*var(--gap)) / 7);   /* 7 colonnes + 8 gaps */
-  --card-h: calc(var(--card-w) * 1.4);          /* ratio 2.5x3.5 ~ 1:1.4 */
+  --card-w: calc((100vw - 8 * var(--gap)) / 7); /* 7 columns + 8 gaps */
+  --card-h: calc(var(--card-w) * 1.4); /* ratio 2.5x3.5 ~ 1:1.4 */
 }
 
-/* La grille suit --card-w */
-.game{ max-width: 100vw; margin: 0 auto; padding: var(--gap); }
-.stock-row{ display:grid; grid-template-columns: repeat(7, var(--card-w)); gap: var(--gap); }
-.tableau{ display:grid; grid-template-columns: repeat(7, var(--card-w)); gap: var(--gap); }
+/* Grid follows --card-w */
+.game {
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: var(--gap);
+}
+.stock-row {
+  display: grid;
+  grid-template-columns: repeat(7, var(--card-w));
+  gap: var(--gap);
+}
+.tableau {
+  display: grid;
+  grid-template-columns: repeat(7, var(--card-w));
+  gap: var(--gap);
+}
 
-/* Confort iOS (encoches, barres) */
-body{ padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-.pile, .card{ touch-action: none; user-select: none; }
-.card .center { font-size: calc(var(--card-w) * 0.6); }
+/* iOS comfort (notches, bars) */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pile,
+.card {
+  touch-action: none;
+  user-select: none;
+}
+.card .center {
+  font-size: calc(var(--card-w) * 0.6);
+}
 
 /* Compact mode for short landscape screens */
-@media (max-height: 480px) and (orientation: landscape){
-	.stock-row .card:not(.dragging), .stock-row .pile, .stock-row .spacer {
-		height:calc(var(--card-h) / 2);
-		min-height:calc(var(--card-h) / 2);
-	}
-	.pile.foundation:empty::after { line-height: calc(var(--card-h) / 2); }
-	.stock-row .card:not(.dragging) .corner.bottom-right { display: none; }
+@media (max-height: 480px) and (orientation: landscape) {
+  .stock-row .card:not(.dragging),
+  .stock-row .pile,
+  .stock-row .spacer {
+    height: calc(var(--card-h) / 2);
+    min-height: calc(var(--card-h) / 2);
+  }
+  .pile.foundation:empty::after {
+    line-height: calc(var(--card-h) / 2);
+  }
+  .stock-row .card:not(.dragging) .corner.bottom-right {
+    display: none;
+  }
 }
 
 /* Even tighter mode: show only the top third */
-@media (max-height: 380px) and (orientation: landscape){
-	.stock-row .card:not(.dragging), .stock-row .pile, .stock-row .spacer {
-		height:calc(var(--card-h) / 3);
-		min-height:calc(var(--card-h) / 3);
-	}
-	.pile.foundation:empty::after { line-height: calc(var(--card-h) / 3); }
-	.stock-row .card:not(.dragging) .center { display: none; }
+@media (max-height: 380px) and (orientation: landscape) {
+  .stock-row .card:not(.dragging),
+  .stock-row .pile,
+  .stock-row .spacer {
+    height: calc(var(--card-h) / 3);
+    min-height: calc(var(--card-h) / 3);
+  }
+  .pile.foundation:empty::after {
+    line-height: calc(var(--card-h) / 3);
+  }
+  .stock-row .card:not(.dragging) .center {
+    display: none;
+  }
 }
 
-html, body {
-  overflow: hidden;       /* supprime scroll horizontal et vertical */
+html,
+body {
+  overflow: hidden; /* remove horizontal and vertical scroll */
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-/* bonus : cacher la scrollbar mais garder le scroll possible */
-body::-webkit-scrollbar { display: none; }   /* Chrome/Safari */
-body { -ms-overflow-style: none; scrollbar-width: none; } /* IE/Firefox */
+/* bonus: hide scrollbar but keep scrolling */
+body::-webkit-scrollbar {
+  display: none;
+} /* Chrome/Safari */
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+} /* IE/Firefox */
 
-/* La carte devient un conteneur “size” */
-.card{
-  container-type: size;        /* Safari/Chrome/FF récents */
-  overflow: hidden;            /* on coupe proprement si besoin */
+/* The card becomes a "size" container */
+.card {
+  container-type: size; /* Safari/Chrome/Firefox recent */
+  overflow: hidden; /* clip overflow if needed */
 }
 
-/* Si la hauteur rendue de la carte est petite, on enlève l’angle retourné */
-@container (max-height: 120px){
-  .corner.bottom-right{ display: none; }
+/* If card height is small, remove the folded corner */
+@container (max-height: 120px) {
+  .corner.bottom-right {
+    display: none;
+  }
 }
 
-/* Optionnel: encore plus petit → cacher aussi le symbole central */
-@container (max-height: 90px){
-  .center{ display: none; }
+/* Optional: when even smaller, hide the center symbol */
+@container (max-height: 90px) {
+  .center {
+    display: none;
+  }
 }
 
 /* ===== Win animation overlay ===== */
-.win-animation{
+.win-animation {
   /* full-screen overlay that ignores pointer events */
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-  z-index:3000;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 3000;
 }
-.win-animation .celebration-card{
+.win-animation .celebration-card {
   /* cards start just above the viewport */
-  position:absolute;
-  top:calc(var(--card-h) * -1);
+  position: absolute;
+  top: calc(var(--card-h) * -1);
   /* fall with a bit of horizontal drift and rotation */
   animation: win-fall 3s linear forwards;
 }
-@keyframes win-fall{
-  from{ transform:translate(0,0) rotate(0deg); opacity:1; }
-  to{ transform:translate(var(--dx,0), calc(100vh + var(--card-h))) rotate(var(--rot,720deg)); opacity:0; }
+@keyframes win-fall {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx, 0), calc(100vh + var(--card-h)))
+      rotate(var(--rot, 720deg));
+    opacity: 0;
+  }
 }

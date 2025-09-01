@@ -432,3 +432,24 @@ body { -ms-overflow-style: none; scrollbar-width: none; } /* IE/Firefox */
 @container (max-height: 90px){
   .center{ display: none; }
 }
+
+/* ===== Win animation overlay ===== */
+.win-animation{
+  /* full-screen overlay that ignores pointer events */
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:3000;
+}
+.win-animation .celebration-card{
+  /* cards start just above the viewport */
+  position:absolute;
+  top:calc(var(--card-h) * -1);
+  /* fall with a bit of horizontal drift and rotation */
+  animation: win-fall 3s linear forwards;
+}
+@keyframes win-fall{
+  from{ transform:translate(0,0) rotate(0deg); opacity:1; }
+  to{ transform:translate(var(--dx,0), calc(100vh + var(--card-h))) rotate(var(--rot,720deg)); opacity:0; }
+}

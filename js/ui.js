@@ -162,6 +162,35 @@ function hideBanner(){
   // laisse le texte pour accessibilité; remettra à jour au prochain show
 }
 
+// Simple win celebration: shower the screen with cards
+function winAnimation(){
+  // Overlay to hold temporary animated cards
+  const overlay = document.createElement("div");
+  overlay.className = "win-animation";
+  document.body.appendChild(overlay);
+
+  const suits = ["S","H","D","C"];
+
+  // Generate a full deck of face-up cards
+  for (const suit of suits){
+    for (let rank = 1; rank <= 13; rank++){
+      const card = makeCardEl({ suit, rank, faceUp:true }, 0, { kind:"foundation", cards:[] });
+      card.classList.add("celebration-card");
+      overlay.appendChild(card);
+
+      // Random horizontal start position and drift/rotation via CSS vars
+      const w = card.getBoundingClientRect().width;
+      card.style.left = Math.random() * (window.innerWidth - w) + "px";
+      card.style.setProperty("--dx", (Math.random()*200 - 100) + "px");
+      card.style.setProperty("--rot", (Math.random()*720 + 360) + "deg");
+      card.style.animationDelay = (Math.random()*0.5) + "s";
+    }
+  }
+
+  // Clean up after animations finish
+  setTimeout(() => overlay.remove(), 4000);
+}
+
 function highlightMove(move){
   clearValidTargets();
   if (!move) return;
@@ -355,7 +384,7 @@ function onCardTap(e){
 }
 
 
-    return { ...api, init, render, toast, applyDeltas, updateStatus, highlightMove };
+    return { ...api, init, render, toast, applyDeltas, updateStatus, highlightMove, winAnimation };
   })();
 
   window.UI = UI;

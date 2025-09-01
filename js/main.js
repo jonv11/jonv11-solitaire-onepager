@@ -164,6 +164,9 @@
           stopTimer();                 // freeze timer at win time
           setActionButtonsVisible(false); // hide undo/redo/hint buttons
           UI.toast("You win!");       // notify player
+          if (settings.animations && UI.winAnimation) {
+            UI.winAnimation();        // celebrate with falling cards
+          }
         });
         Engine.on && Engine.on("stuck",() => UI.toast("No moves. Stuck."));
 

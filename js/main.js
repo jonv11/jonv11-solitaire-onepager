@@ -117,11 +117,17 @@
     }
     function stopTimer(){ if (timerId) { clearInterval(timerId); timerId = 0; } }
 
-    // Toggle visibility of action buttons (undo/redo/hint)
+    // Toggle visibility of action buttons (undo/redo/hint/auto)
     function setActionButtonsVisible(show){
       const display = show ? "" : "none";
-      [refs.btnUndo, refs.btnRedo, refs.btnHint].forEach(btn => {
-        if (btn) btn.style.display = display;
+      [refs.btnUndo, refs.btnRedo, refs.btnHint, refs.btnAuto].forEach(btn => {
+        if (!btn) return;
+        // Auto button only visible when setting allows it
+        if (btn === refs.btnAuto && !settings.autoComplete) {
+          btn.style.display = "none";
+        } else {
+          btn.style.display = display;
+        }
       });
     }
 
@@ -141,12 +147,38 @@
     function draw(){ Engine.draw && Engine.draw(); }
     function undo(){ Engine.undo && Engine.undo(); }
     function redo(){ Engine.redo && Engine.redo(); }
-	function hint(){
-	  const move = Engine.findHint && Engine.findHint();
-	  if (move) UI.highlightMove(move);
-	  else { UI.toast("No moves"); }
-	}
-    function autoComplete(){ /* to be implemented with Engine */ }
+        function hint(){
+          const move = Engine.findHint && Engine.findHint();
+          if (move) UI.highlightMove(move);
+          else { UI.toast("No moves"); }
+        }
+    // Automatically play all remaining cards to foundations when safe
+    function autoComplete(){
+      if (!settings.autoComplete) return; // feature disabled via settings
+
+      const st = Engine.getState && Engine.getState();
+      if (!st) return;
+
+      // Auto-complete only when no stock cards remain and all tableau cards are face-up
+      const stockHasCards = st.piles.stock.cards.length > 0;
+      const hiddenInTableau = st.piles.tableau.some(p => p.cards.some(c => !c.faceUp));
+      if (stockHasCards || hiddenInTableau){
+        UI.toast("Auto-complete not safe yet");
+        return;
+      }
+
+      // Recursive step: move one card at a time with a small delay
+      const step = () => {
+        const move = Engine.findHint && Engine.findHint();
+        if (move && move.dstPileId.startsWith("foundation")){
+          Engine.move(move);
+          const delay = settings.animations ? 200 : 0;
+          setTimeout(step, delay);
+        }
+      };
+
+      step();
+    }
 
     // Event wires
     Engine.on && Engine.on("state", (st) => {

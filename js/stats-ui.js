@@ -14,11 +14,17 @@
     return m+":"+ss;
   }
 
-  // Build panel DOM once
+  // Build panel DOM once. Styling is defined in css/style.css for maintainability.
   const panel = document.createElement('div');
   panel.id = 'statsPanel';
-  panel.style.cssText = 'position:fixed;top:10%;left:50%;transform:translateX(-50%);background:#fff;padding:1em;border:1px solid #333;max-width:90%;z-index:1000;display:none;';
-  panel.innerHTML = '<div id="statsContent"></div>\n<div style="margin-top:0.5em;">\n  <button id="statsExport">Export</button>\n  <button id="statsImport">Import</button>\n  <button id="statsReset">Reset</button>\n  <button id="statsClose">Close</button>\n</div>';
+  panel.innerHTML = `
+    <div id="statsContent"></div>
+    <div class="stats-actions">
+      <button id="statsExport" class="btn">Export</button>
+      <button id="statsImport" class="btn">Import</button>
+      <button id="statsReset" class="btn">Reset</button>
+      <button id="statsClose" class="btn">Close</button>
+    </div>`;
   document.body.appendChild(panel);
 
   function render(){

@@ -30,6 +30,7 @@ Please read the following guidelines before opening an issue or submitting a pul
 3. **Lint / Test** locally before committing:
    - Ensure the game loads cleanly in at least one modern desktop browser and one mobile browser.
    - Avoid console errors/warnings.
+   - Add unit tests for all code-based parts that are testable and keep them passing (`npm test`).
 4. **Commit** using clear messages:
    ```
    feat: add auto-move to foundations

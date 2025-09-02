@@ -204,53 +204,70 @@
       endCheck();
     }
 
-    function findHint() {
-      // Provide a simple heuristic hint: prioritize waste moves, then tableau
-      if (!state) return null;
-      const top = (p) => p.cards[p.cards.length - 1] || null;
+    // Core hint logic extracted for reuse and unit testing
+    // Accepts an explicit state object and returns the next suggested move,
+    // or `null` if no legal move exists.
+    function findHintInState(st) {
+      // ---- Prioritize foundation moves across the entire board ----
 
-      // 1. waste → foundation ou tableau
-      if (state.piles.waste.cards.length) {
-        const c = top(state.piles.waste);
-        for (const f of state.piles.foundations) {
-          if (Model.canDropOnFoundation(c, top(f), f.suit))
+      // 1. waste → foundation
+      if (st.piles.waste.cards.length) {
+        const c = top(st.piles.waste);
+        for (const f of st.piles.foundations) {
+          if (Model.canDropOnFoundation(c, top(f), f.suit)) {
             return {
               srcPileId: "waste",
-              cardIndex: state.piles.waste.cards.length - 1,
+              cardIndex: st.piles.waste.cards.length - 1,
               dstPileId: f.id,
             };
-        }
-        for (const t of state.piles.tableau) {
-          if (Model.canDropOnTableau(c, top(t)))
-            return {
-              srcPileId: "waste",
-              cardIndex: state.piles.waste.cards.length - 1,
-              dstPileId: t.id,
-            };
+          }
         }
       }
 
-      // 2. tableau → foundation ou tableau
-      for (let ti = 0; ti < state.piles.tableau.length; ti++) {
-        const t = state.piles.tableau[ti];
+      // 2. tableau top cards → foundation
+      for (const t of st.piles.tableau) {
+        const c = top(t);
+        if (!c || !c.faceUp) continue;
+        for (const f of st.piles.foundations) {
+          if (Model.canDropOnFoundation(c, top(f), f.suit)) {
+            return {
+              srcPileId: t.id,
+              cardIndex: t.cards.length - 1,
+              dstPileId: f.id,
+            };
+          }
+        }
+      }
+
+      // ---- No foundation moves found; fall back to tableau moves ----
+
+      // 3. waste → tableau
+      if (st.piles.waste.cards.length) {
+        const c = top(st.piles.waste);
+        for (const t of st.piles.tableau) {
+          if (Model.canDropOnTableau(c, top(t))) {
+            return {
+              srcPileId: "waste",
+              cardIndex: st.piles.waste.cards.length - 1,
+              dstPileId: t.id,
+            };
+          }
+        }
+      }
+
+      // 4. tableau → tableau
+      for (let ti = 0; ti < st.piles.tableau.length; ti++) {
+        const t = st.piles.tableau[ti];
         for (let i = 0; i < t.cards.length; i++) {
           if (!t.cards[i].faceUp) continue;
           const c = t.cards[i];
 
-          // try moving single card to foundation when on top
-          if (i === t.cards.length - 1) {
-            for (const f of state.piles.foundations) {
-              if (Model.canDropOnFoundation(c, top(f), f.suit))
-                return { srcPileId: t.id, cardIndex: i, dstPileId: f.id };
-            }
-          }
-
           // only consider the first face-up run in a tableau
           if (i > 0 && t.cards[i - 1].faceUp) continue;
 
-          for (let tj = 0; tj < state.piles.tableau.length; tj++) {
+          for (let tj = 0; tj < st.piles.tableau.length; tj++) {
             if (ti === tj) continue;
-            const dstPile = state.piles.tableau[tj];
+            const dstPile = st.piles.tableau[tj];
             const dstTop = top(dstPile);
 
             // skip moving a king pile with no hidden cards to another empty tableau
@@ -266,13 +283,20 @@
             )
               continue;
 
-            if (Model.canDropOnTableau(c, dstTop))
+            if (Model.canDropOnTableau(c, dstTop)) {
               return { srcPileId: t.id, cardIndex: i, dstPileId: dstPile.id };
+            }
           }
         }
       }
 
       return null;
+    }
+
+    // Public wrapper uses internal state
+    function findHint() {
+      if (!state) return null;
+      return findHintInState(state);
     }
 
     function tick() {
@@ -489,6 +513,8 @@
       move,
       tick,
       findHint,
+      // Exposed for unit tests
+      _findHint: findHintInState,
       autoMoveOne,
       undo,
       redo,

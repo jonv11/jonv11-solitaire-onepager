@@ -6,6 +6,8 @@
 - Win celebration animation when a game is completed
 - Auto-complete option to finish when only foundation moves remain
 - Cards visibly travel from source to foundation during auto-complete when animations are enabled
+- Basic Node-based test harness for unit testing
+- Initial solver unit tests migrated from inline test states
 
 ### Changed
 - Harmonized event system
@@ -22,3 +24,4 @@
 - GitHub Pages settings for deployment
 - Redeal limits now enforced for 1 or 3 redeal options
 - Deterministic solver script now loaded to enable "no hope" hints
+- Auto-complete now prioritizes all foundation moves before tableau moves, preventing premature stops

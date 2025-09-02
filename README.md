@@ -13,6 +13,7 @@ Klondike Solitaire implemented as a single-page web app. No backend. Offline-cap
 - Undo/Redo with incremental DOM patching.
 - Scoring: Standard and Vegas.
 - Hints and optional auto-complete (auto-finish remaining foundation moves when a win is guaranteed).
+- Deterministic solver API to detect proven dead-ends.
 - Persistent settings and stats in `localStorage` with cookie fallback.
 - One HTML file, split CSS/JS, no frameworks required.
 

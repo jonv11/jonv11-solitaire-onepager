@@ -734,6 +734,34 @@ body {
   }
 }
 
+/* ===== Stats panel ===== */
+#statsPanel {
+  /* centered overlay with dark translucent background */
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90%;
+  padding: 1em;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  border: var(--line) solid var(--outline);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: none; /* hidden until toggled */
+}
+#statsPanel p {
+  margin: 0.25em 0;
+}
+#statsPanel .stats-actions {
+  margin-top: 0.5em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  justify-content: center;
+}
+
 /* ===== Win animation overlay ===== */
 .win-animation {
   /* full-screen overlay that ignores pointer events */

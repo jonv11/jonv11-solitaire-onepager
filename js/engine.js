@@ -314,6 +314,173 @@
       }
     }
 
+    // ---------- Pure helpers exposed for solver ----------
+
+    function listLegalMoves(st) {
+      const moves = [];
+      const top = (p) => p.cards[p.cards.length - 1] || null;
+
+      // tableau flips
+      for (const t of st.piles.tableau) {
+        if (t.cards.length && !top(t).faceUp)
+          moves.push({ type: "flip", pileId: t.id });
+      }
+
+      // waste moves
+      if (st.piles.waste.cards.length) {
+        const c = top(st.piles.waste);
+        for (const f of st.piles.foundations) {
+          if (Model.canDropOnFoundation(c, top(f), f.suit))
+            moves.push({
+              type: "move",
+              src: "waste",
+              cardIndex: st.piles.waste.cards.length - 1,
+              dst: f.id,
+            });
+        }
+        for (const t of st.piles.tableau) {
+          if (Model.canDropOnTableau(c, top(t)))
+            moves.push({
+              type: "move",
+              src: "waste",
+              cardIndex: st.piles.waste.cards.length - 1,
+              dst: t.id,
+            });
+        }
+      }
+
+      // tableau moves
+      for (const t of st.piles.tableau) {
+        const first = t.cards.findIndex((c) => c.faceUp);
+        if (first === -1) continue;
+        for (let i = first; i < t.cards.length; i++) {
+          const c = t.cards[i];
+          // to foundation
+          if (i === t.cards.length - 1) {
+            for (const f of st.piles.foundations) {
+              if (Model.canDropOnFoundation(c, top(f), f.suit))
+                moves.push({ type: "move", src: t.id, cardIndex: i, dst: f.id });
+            }
+          }
+          // to tableau
+          for (const tt of st.piles.tableau) {
+            if (tt === t) continue;
+            if (Model.canDropOnTableau(c, top(tt)))
+              moves.push({ type: "move", src: t.id, cardIndex: i, dst: tt.id });
+          }
+        }
+      }
+
+      // draw/redeal
+      if (canDraw(st)) moves.push({ type: "draw" });
+
+      return moves;
+    }
+
+    function applyMove(st, move) {
+      const next = cloneState(st);
+      const top = (p) => p.cards[p.cards.length - 1] || null;
+      const pileByIdPure = (id) => {
+        if (id === "stock") return next.piles.stock;
+        if (id === "waste") return next.piles.waste;
+        if (id.startsWith("foundation-")) {
+          const suit = id.split("-")[1];
+          return next.piles.foundations.find((f) => f.suit === suit);
+        }
+        if (id.startsWith("tab-")) {
+          const idx = Number(id.split("-")[1]) - 1;
+          return next.piles.tableau[idx];
+        }
+        return null;
+      };
+
+      if (move.type === "flip") {
+        const p = pileByIdPure(move.pileId);
+        const c = top(p);
+        if (c) c.faceUp = true;
+        return next;
+      }
+      if (move.type === "move") {
+        const src = pileByIdPure(move.src);
+        const dst = pileByIdPure(move.dst);
+        const cards = src.cards.slice(move.cardIndex);
+        dst.cards.push(...cards);
+        src.cards.length = move.cardIndex;
+        if (src.kind === "tableau") {
+          const t = top(src);
+          if (t && !t.faceUp) t.faceUp = true;
+        }
+        return next;
+      }
+      if (move.type === "draw") {
+        const n = next.settings.drawCount || 1;
+        for (let i = 0; i < n; i++) {
+          if (!next.piles.stock.cards.length) {
+            if (
+              next.piles.waste.cards.length &&
+              next.settings.redealPolicy !== "none" &&
+              (next.settings.redealPolicy === "unlimited" ||
+                next.redealsRemaining > 0)
+            ) {
+              next.piles.stock.cards = next.piles.waste.cards
+                .reverse()
+                .map((c) => ({ ...c, faceUp: false }));
+              next.piles.waste.cards = [];
+              if (next.settings.redealPolicy.startsWith("limited"))
+                next.redealsRemaining--;
+            } else break;
+          }
+          const c = next.piles.stock.cards.pop();
+          if (!c) break;
+          c.faceUp = true;
+          next.piles.waste.cards.push(c);
+        }
+        return next;
+      }
+      return next;
+    }
+
+    function enumerateAutoSafeFoundationMoves(st) {
+      const moves = [];
+      const top = (p) => p.cards[p.cards.length - 1] || null;
+      const bySuit = {};
+      for (const f of st.piles.foundations) bySuit[f.suit] = f;
+      const rankInFoundation = (s) => bySuit[s].cards.length;
+      const isSafe = (card) => {
+        const r = card.rank;
+        if (r <= 2) return true;
+        const red = Model.isRed(card.suit);
+        const opp = red ? ["S", "C"] : ["H", "D"];
+        if (Math.min(rankInFoundation(opp[0]), rankInFoundation(opp[1])) >= r - 1)
+          return true;
+        if (rankInFoundation(card.suit) >= r + 1) return true;
+        return false;
+      };
+
+      const waste = st.piles.waste;
+      if (waste.cards.length) {
+        const c = top(waste);
+        const f = bySuit[c.suit];
+        if (Model.canDropOnFoundation(c, top(f), f.suit) && isSafe(c))
+          moves.push({
+            type: "move",
+            src: "waste",
+            cardIndex: waste.cards.length - 1,
+            dst: f.id,
+          });
+      }
+
+      for (const t of st.piles.tableau) {
+        if (!t.cards.length) continue;
+        const c = top(t);
+        const f = bySuit[c.suit];
+        if (c.faceUp && Model.canDropOnFoundation(c, top(f), f.suit) && isSafe(c))
+          moves.push({ type: "move", src: t.id, cardIndex: t.cards.length - 1, dst: f.id });
+      }
+
+      return moves;
+    }
+
     return {
       ...api,
       newGame,
@@ -325,6 +492,11 @@
       autoMoveOne,
       undo,
       redo,
+      // solver helpers
+      listLegalMoves,
+      applyMove,
+      isWin,
+      enumerateAutoSafeFoundationMoves,
     };
   })();
 

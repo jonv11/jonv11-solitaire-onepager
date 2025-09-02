@@ -165,7 +165,12 @@
       const move = Engine.findHint && Engine.findHint();
       if (move) UI.highlightMove(move);
       else {
-        UI.toast("No moves");
+        const st = Engine.getState && Engine.getState();
+        if (st && window.Solver && Solver.isNoHope(JSON.parse(JSON.stringify(st)))) {
+          UI.toast("No hope: proved dead end");
+        } else {
+          UI.toast("No moves");
+        }
       }
     }
     // Automatically play all remaining cards to foundations when safe

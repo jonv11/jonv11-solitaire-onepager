@@ -100,9 +100,15 @@ All values are constants in `js/engine.js` and can be adjusted.
 Uses `localStorage`. Falls back to browser cookie via a tiny jQuery helper if unavailable.
 
 **Keys**
-- `solitaire.settings` → JSON of Settings  
-- `solitaire.saved` → current `GameState` for resume  
+- `solitaire.settings` → JSON of Settings
+- `solitaire.saved` → current `GameState` for resume
 - `solitaire.stats` → wins, time, moves, streaks, vegas bankroll
+
+### Storage and Stats
+
+Schema v1 stores a rolling window of finished games and aggregated counters
+under `soli.v1.*` keys in `localStorage`. Statistics stay on the device and can
+be exported or imported via the **Stats** panel. No data leaves the browser.
 
 ---
 

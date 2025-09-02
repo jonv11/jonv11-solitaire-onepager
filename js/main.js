@@ -143,6 +143,10 @@
       readSettingsFromControls();
       const st = Engine.newGame ? Engine.newGame(settings) : null;
       if (st) {
+        if (window.SoliStats) {
+          SoliStats.initStats();
+          SoliStats.saveCurrent({ ts: Date.now(), dr: settings.drawCount, mv:0, rv:0, ru:0, fu:[0,0,0,0], um:0 });
+        }
         UI.render(st);
         updateStatus(st);
         Store.saveState(st);
@@ -218,6 +222,17 @@
         UI.render(st);
         updateStatus(st);
         Store.saveState(st);
+        if (window.SoliStats) {
+          const fu = st.piles.foundations.map((f) => f.cards.length);
+          const redealAllowed = (policy) => {
+            if (policy === "unlimited") return Number.MAX_SAFE_INTEGER;
+            if (policy === "none") return 0;
+            const m = /limited\((\d+)\)/.exec(policy);
+            return m ? Number(m[1]) : 0;
+          };
+          const rv = redealAllowed(st.settings.redealPolicy) - (st.redealsRemaining || 0);
+          SoliStats.checkpoint({ mv: st.score.moves, rv, fu });
+        }
       });
 
     Engine.on &&
@@ -227,15 +242,62 @@
       });
 
     Engine.on &&
-      Engine.on("win", () => {
+      Engine.on("win", (st) => {
         stopTimer(); // freeze timer at win time
         setActionButtonsVisible(false); // hide undo/redo/hint buttons
         UI.toast("You win!"); // notify player
         if (settings.animations && UI.winAnimation) {
           UI.winAnimation(); // celebrate with falling cards
         }
+        if (window.SoliStats) {
+          const fu = st.piles.foundations.map((f) => f.cards.length);
+          const redealAllowed = (policy) => {
+            if (policy === "unlimited") return Number.MAX_SAFE_INTEGER;
+            if (policy === "none") return 0;
+            const m = /limited\((\d+)\)/.exec(policy);
+            return m ? Number(m[1]) : 0;
+          };
+          const rv = redealAllowed(st.settings.redealPolicy) - (st.redealsRemaining || 0);
+          SoliStats.commitResult({
+            ts: st.time.startedAt,
+            te: Date.now(),
+            w: 1,
+            m: st.score.moves,
+            t: Math.floor(st.time.elapsedMs / 1000),
+            dr: st.settings.drawCount,
+            sc: st.score.total,
+            rv,
+            fu,
+            ab: "none"
+          });
+        }
       });
-    Engine.on && Engine.on("stuck", () => UI.toast("No moves. Stuck."));
+    Engine.on &&
+      Engine.on("stuck", (st) => {
+        UI.toast("No moves. Stuck.");
+        if (window.SoliStats) {
+          const fu = st.piles.foundations.map((f) => f.cards.length);
+          const redealAllowed = (policy) => {
+            if (policy === "unlimited") return Number.MAX_SAFE_INTEGER;
+            if (policy === "none") return 0;
+            const m = /limited\((\d+)\)/.exec(policy);
+            return m ? Number(m[1]) : 0;
+          };
+          const rv = redealAllowed(st.settings.redealPolicy) - (st.redealsRemaining || 0);
+          SoliStats.commitResult({
+            ts: st.time.startedAt,
+            te: Date.now(),
+            w: 0,
+            m: st.score.moves,
+            t: Math.floor(st.time.elapsedMs / 1000),
+            dr: st.settings.drawCount,
+            sc: st.score.total,
+            rv,
+            fu,
+            ab: "block"
+          });
+        }
+      });
 
     return {
       newGame,

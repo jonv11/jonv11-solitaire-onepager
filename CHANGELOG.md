@@ -6,6 +6,8 @@
 
 ### Fixed
 
+- Counting an in-progress game as a loss when starting a new one
+
 ## [0.1.0] - 2025-09-03
 
 ### Added

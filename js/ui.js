@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* jonv11-solitaire-onepager - js/ui.js
    UI rendering + interactions.
    - Click stock to draw.

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* Simple event emitter used across modules */
 (function () {
   "use strict";

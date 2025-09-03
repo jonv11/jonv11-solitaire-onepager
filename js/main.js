@@ -145,12 +145,55 @@ const refs = {
     }
 
     function newGame() {
+      // If an existing game is in progress, record it as a loss before starting over
+      if (
+        window.SoliStats &&
+        window.localStorage &&
+        window.localStorage.getItem("soli.v1.current")
+      ) {
+        SoliStats.initStats();
+        const prev = Engine.getState && Engine.getState();
+        if (prev) {
+          Engine.tick && Engine.tick(); // update elapsed time
+          const fu = prev.piles.foundations.map((f) => f.cards.length);
+          const redealAllowed = (policy) => {
+            if (policy === "unlimited") return Number.MAX_SAFE_INTEGER;
+            if (policy === "none") return 0;
+            const m = /limited\((\d+)\)/.exec(policy);
+            return m ? Number(m[1]) : 0;
+          };
+          const rv =
+            redealAllowed(prev.settings.redealPolicy) -
+            (prev.redealsRemaining || 0);
+          SoliStats.commitResult({
+            ts: prev.time.startedAt,
+            te: Date.now(),
+            w: 0,
+            m: prev.score.moves,
+            t: Math.floor(prev.time.elapsedMs / 1000),
+            dr: prev.settings.drawCount,
+            sc: prev.score.total,
+            rv,
+            fu,
+            ab: "user",
+          });
+        }
+      }
+
       readSettingsFromControls();
       const st = Engine.newGame ? Engine.newGame(settings) : null;
       if (st) {
         if (window.SoliStats) {
           SoliStats.initStats();
-          SoliStats.saveCurrent({ ts: Date.now(), dr: settings.drawCount, mv:0, rv:0, ru:0, fu:[0,0,0,0], um:0 });
+          SoliStats.saveCurrent({
+            ts: Date.now(),
+            dr: settings.drawCount,
+            mv: 0,
+            rv: 0,
+            ru: 0,
+            fu: [0, 0, 0, 0],
+            um: 0,
+          });
         }
         UI.render(st);
         updateStatus(st);

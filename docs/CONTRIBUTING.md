@@ -67,6 +67,14 @@ Please read the following guidelines before opening an issue or submitting a pul
 
 ---
 
+## Node projects
+
+- Use `npm install` to add or update dependencies and commit the resulting `package-lock.json`.
+- Continuous Integration uses Node.js LTS 20 and runs `npm ci` for clean installs.
+- CI fails if `package.json` and `package-lock.json` drift out of sync.
+
+---
+
 ## License
 
 By contributing, you agree that your code will be licensed under the [MIT License](LICENSE) of this repository.

@@ -1,8 +1,9 @@
 {
+  "root": true,
   "env": {
-    "es2022": true,
+    "es2021": true,
     "node": true,
-    "browser": true
+    "jest": true
   },
   "extends": [
     "eslint:recommended",
@@ -14,6 +15,5 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "rules": {},
-  "settings": {}
+  "rules": {}
 }

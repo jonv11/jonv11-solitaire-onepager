@@ -11,12 +11,13 @@
     "test:coverage": "nyc npm test"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-promise": "^6.1.1",
+    "eslint": "8.57.1",
+    "eslint-config-prettier": "9.1.2",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-promise": "6.6.0",
     "jsdom": "^24.0.0",
     "nyc": "^15.1.0",
-    "prettier": "^3.3.2"
-  }
+    "prettier": "3.6.2"
+  },
+  "packageManager": "npm@11.4.2"
 }

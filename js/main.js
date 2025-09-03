@@ -39,24 +39,29 @@
   });
 
   // ---------- DOM refs
-  const refs = {
-    root: $("#game"),
-    score: $("#score"),
-    moves: $("#moves"),
-    time: $("#time"),
-    btnNew: $("#newGame"),
-    btnUndo: $("#undo"),
-    btnRedo: $("#redo"),
-    btnHint: $("#hint"),
-    btnAuto: $("#auto"),
-    selDraw: $("#drawCount"),
-    selRedeal: $("#redealPolicy"),
-    chkLeft: $("#leftHandMode"),
-    chkHints: $("#hints"),
-    chkAuto: $("#autoComplete"),
-    chkAnim: $("#animations"),
-    chkSound: $("#sound"),
-  };
+const refs = {
+  root: $("#game"),
+  score: $("#score"),
+  moves: $("#moves"),
+  time: $("#time"),
+  btnNew: $("#newGame"),
+  btnUndo: $("#undo"),
+  btnRedo: $("#redo"),
+  btnHint: $("#hint"),
+  btnAuto: $("#auto"),
+  selDraw: $("#drawCount"),
+  selRedeal: $("#redealPolicy"),
+  chkLeft: $("#leftHandMode"),
+  chkHints: $("#hints"),
+  chkAuto: $("#autoComplete"),
+  chkAnim: $("#animations"),
+  chkSound: $("#sound"),
+};
+
+  // Capture touch gestures inside the game area to avoid iOS Safari
+  // interpreting left-edge drags as history navigation or tab switching.
+  on(refs.root, "touchstart", (ev) => ev.preventDefault(), { passive: false });
+  on(refs.root, "touchmove", (ev) => ev.preventDefault(), { passive: false });
 
   // ---------- Controller
   const Controller = (() => {

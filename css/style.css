@@ -84,6 +84,7 @@ h1 {
   padding: var(--gap);
   max-width: 1200px;
   margin: 0 auto;
+  touch-action: none; /* Capture touches to prevent iOS Safari swipe-back */
 }
 .stock-row {
   display: grid;

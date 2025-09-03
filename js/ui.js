@@ -355,7 +355,12 @@
         return;
       }
 
-      ev.preventDefault();
+      // Only prevent default browser behavior for non-mouse pointers.
+      // Preventing default on mouse would cancel native dblclick events.
+      if (ev.pointerType !== "mouse") {
+        // Touch inputs need default prevented to avoid scrolling during drag.
+        ev.preventDefault();
+      }
       ev.stopPropagation();
 
       // bounding rect of the origin card

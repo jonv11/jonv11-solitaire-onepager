@@ -23,7 +23,7 @@
   let actionCount = 0;
 
   // ---------- helpers
-  function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+  function _clone(obj){ return JSON.parse(JSON.stringify(obj)); }
 
   function initAgg(){
     return {
@@ -94,7 +94,11 @@
   }
 
   function safeRemove(key){
-    try { localStorage.removeItem(key); } catch {}
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      /* no-op */
+    }
   }
 
   // ---------- load helpers

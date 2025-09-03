@@ -1,6 +1,7 @@
 /* jonv11-solitaire-onepager - js/stats-ui.js
    Minimal overlay panel displaying statistics from SoliStats.
 */
+/* global SoliStats */
 (function(){
   'use strict';
 
@@ -66,7 +67,14 @@
       const file = inp.files[0];
       if (!file) return;
       const r = new FileReader();
-      r.onload = () => { try { SoliStats.importAll(r.result, 'merge'); render(); } catch{} };
+      r.onload = () => {
+        try {
+          SoliStats.importAll(r.result, 'merge');
+          render();
+        } catch (err) {
+          /* no-op */
+        }
+      };
       r.readAsText(file);
     };
     inp.click();

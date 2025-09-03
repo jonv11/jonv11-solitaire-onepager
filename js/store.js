@@ -3,6 +3,7 @@
    Persistence API: localStorage with jQuery cookie fallback.
    Keys: solitaire.settings, solitaire.saved, solitaire.stats
 */
+/* global $ */
 (function(){
   'use strict';
 

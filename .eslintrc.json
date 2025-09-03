@@ -1,20 +1,23 @@
 {
   "root": true,
-  "env": {
-    "browser": true,
-    "es2021": true,
-    "node": true,
-    "jest": true
+  "env": { "browser": true, "es2022": true },
+  "extends": ["eslint:recommended", "plugin:promise/recommended"],
+  "plugins": ["promise"],
+  "parserOptions": { "ecmaVersion": "latest", "sourceType": "script" },
+  "rules": {
+    "no-unused-vars": ["error", { "varsIgnorePattern": "^", "argsIgnorePattern": "^" }],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-constant-condition": ["error", { "checkLoops": false }]
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:import/recommended",
-    "plugin:promise/recommended",
-    "prettier"
-  ],
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
-  },
-  "rules": {}
+  "globals": {
+    "$": "readonly",
+    "EventEmitter": "readonly",
+    "Model": "readonly",
+    "Store": "readonly",
+    "Engine": "readonly",
+    "SoliStats": "readonly",
+    "UI": "readonly",
+    "Solver": "readonly",
+    "debugLog": "readonly"
+  }
 }

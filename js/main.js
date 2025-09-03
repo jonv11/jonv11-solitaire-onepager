@@ -2,6 +2,7 @@
    App controller and wiring. Delegates to Engine (rules) and UI (render).
    Safe if Engine/UI/Store are missing: stubs keep the page interactive.
 */
+/* global Store, Engine, SoliStats, UI, Solver */
 (() => {
   "use strict";
 
@@ -19,7 +20,7 @@
   // ---------- Utilities
   const $ = (sel, root = document) => root.querySelector(sel);
   const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
-  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const _clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   // ---------- Defaults and keys
   const DEFAULTS = Object.freeze({
@@ -32,7 +33,7 @@
     sound: false,
   });
 
-  const KEYS = Object.freeze({
+  const _KEYS = Object.freeze({
     settings: "solitaire.settings",
     saved: "solitaire.saved",
     stats: "solitaire.stats",
@@ -248,10 +249,15 @@ const refs = {
         if (move && move.dstPileId.startsWith("foundation")) {
           // When animations are enabled, visually move the card first
           if (settings.animations && UI.animateMove) {
-            UI.animateMove(move).then(() => {
-              Engine.move(move);
-              setTimeout(step, 0); // next step immediately after rendering
-            });
+            UI.animateMove(move)
+              .then(() => {
+                Engine.move(move);
+                setTimeout(step, 0); // next step immediately after rendering
+                return undefined;
+              })
+              .catch((err) => {
+                console.error(err);
+              });
           } else {
             Engine.move(move);
             const delay = settings.animations ? 200 : 0;

@@ -2,6 +2,7 @@
    Core game rules for Klondike.
    Relies on Model and Store. Emits events for UI.
 */
+/* global EventEmitter, Model */
 (function () {
   "use strict";
 

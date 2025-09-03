@@ -231,6 +231,14 @@ npm run lint
 npm test
 ```
 
+### Node and npm
+
+- Run `nvm use` to match the Node version in `.nvmrc`.
+- Use `npm ci` for installs so the lockfile is respected.
+- Before committing, run `npm run lint` and `npm test` locally.
+- When dependencies change, run `npm install` locally and commit the updated `package-lock.json`.
+- If private packages are added, configure an `NPM_TOKEN` repository secret so CI can authenticate.
+
 ---
 
 ## Build and deploy
@@ -248,10 +256,10 @@ Upload the repository contents or point the host to the repo root.
 
 ## CI
 
-`.github/workflows/tests.yml` runs:
+`.github/workflows/node-ci.yml` runs:
+- Install via `npm ci` (requires a committed `package-lock.json`)
 - Lint
 - Unit tests
-- Pages build check
 
 Protect `main` with required status checks and 1 review.
 

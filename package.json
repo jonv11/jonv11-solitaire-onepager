@@ -1,9 +1,22 @@
 {
   "name": "jonv11-solitaire-onepager",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier -w .",
+    "test:coverage": "nyc npm test"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "jsdom": "^24.0.0",
+    "nyc": "^15.1.0",
+    "prettier": "^3.3.2"
   }
 }

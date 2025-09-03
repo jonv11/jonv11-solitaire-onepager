@@ -1,6 +1,14 @@
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.1.0] - 2025-09-03
+
+### Added
 - Initial HTML, CSS, and JS files for the Solitaire game
 - Icons displayed on foundation piles
 - Win celebration animation when a game is completed

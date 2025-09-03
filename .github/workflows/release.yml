@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'SemVer version'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate version
+        run: |
+          v=${{ github.event.inputs.version }}
+          if ! [[ $v =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version must be SemVer" >&2
+            exit 1
+          fi
+          latest=$(git tag --sort=-v:refname | head -n1 | tr -d 'v')
+          if [ -n "$latest" ] && [ $(printf '%s\n%s' "$latest" "$v" | sort -V | head -n1) != "$latest" ]; then
+            echo "Version must be greater than $latest" >&2
+            exit 1
+          fi
+      - name: Update changelog and package.json
+        run: |
+          v=${{ github.event.inputs.version }}
+          date=$(date -u +%Y-%m-%d)
+          sed -i "s/^\(## \[Unreleased\]\)/\1\n\n## [${v}] - ${date}/" CHANGELOG.md
+          sed -i "s/\"version\": \"[0-9.]*\"/\"version\": \"${v}\"/" package.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -am "chore(release): v${v}" || echo "no changes"
+          git tag -a "v${v}" -m "v${v}"
+      - name: Push changes
+        run: git push --follow-tags
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: v${{ github.event.inputs.version }}
+          body: |
+            See CHANGELOG.md for details.
+      - name: Check for build script
+        id: build
+        run: |
+          if npm run -s build >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Build
+        if: steps.build.outputs.exists == 'true'
+        run: npm run build
+      - name: Upload Pages artifact
+        if: steps.build.outputs.exists == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist

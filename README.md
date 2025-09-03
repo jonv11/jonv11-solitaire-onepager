@@ -186,12 +186,20 @@ jonv11-solitaire-onepager/
 │   ├── CONTRIBUTING.md
 │   └── ROADMAP.md
 ├── .github/
-│   ├── workflows/ci.yml
-│   └── PULL_REQUEST_TEMPLATE.md
+│   ├── workflows/
+│   │   ├── tests.yml
+│   │   └── codeql.yml
+│   └── pull_request_template.md
 ├── .editorconfig
 ├── .gitattributes
 ├── .gitignore
-├── .prettierrc
+├── .eslintrc.json
+├── .eslintignore
+├── .prettierrc.json
+├── .nycrc.json
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── SECURITY.md
 ├── LICENSE
 ├── CHANGELOG.md
 └── README.md
@@ -240,12 +248,21 @@ Upload the repository contents or point the host to the repo root.
 
 ## CI
 
-`.github/workflows/ci.yml` runs:
+`.github/workflows/tests.yml` runs:
 - Lint
 - Unit tests
 - Pages build check
 
 Protect `main` with required status checks and 1 review.
+
+## Release
+
+Run the `Release` workflow from the Actions tab with an input `version` (SemVer).
+The workflow updates `package.json` and `CHANGELOG.md`, tags the commit, and
+publishes a GitHub Release.
+
+The `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com)
+with an `Unreleased` section for upcoming changes.
 
 ---
 
@@ -266,9 +283,10 @@ See `docs/ROADMAP.md` for details.
 
 - Use Conventional Commits.  
 - Target `develop` for feature work.  
-- Add unit tests alongside logic changes.  
-- Keep comments, identifiers, and tests in English.  
+- Add unit tests alongside logic changes.
+- Keep comments, identifiers, and tests in English.
 - Open a PR with a clear description and screenshots or GIFs if UI changes.
+- Ensure secret scanning and push protection are enabled in repository settings.
 
 See `docs/CONTRIBUTING.md`.
 

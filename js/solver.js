@@ -5,6 +5,7 @@
    The solver is pure and does not touch the DOM. It relies on Engine's
    pure helpers for move generation and application.
 */
+/* global Engine */
 (function(){
   "use strict";
 

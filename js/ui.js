@@ -6,26 +6,27 @@
    - Basic drag visuals; drops call Engine.move if present.
    Engine is responsible for rule validation and state updates.
 */
+/* global EventEmitter, Model, Engine */
 (function () {
   "use strict";
 
   // Simple wrapper to allow stripping debug logging in production
-  function debugLog(txt) {
+  function _debugLog(txt) {
     if (console && console.log) console.log("DEBUG:", txt);
   }
 
   const UI = (() => {
     const api = EventEmitter();
-    let root, scoreEl, movesEl, timeEl;
+    let root, scoreEl, movesEl, _timeEl;
     let state = null;
-    let selection = null; // { pileId, cardIndex }
+    let _selection = null; // { pileId, cardIndex }
 
     // ---------- Public
     function init(rootEl) {
       root = rootEl;
       scoreEl = document.getElementById("score");
       movesEl = document.getElementById("moves");
-      timeEl = document.getElementById("time");
+      _timeEl = document.getElementById("time");
     }
 
     function render(nextState) {
@@ -163,7 +164,7 @@
         .querySelectorAll(".pile.valid-target")
         .forEach((el) => el.classList.remove("valid-target"));
     }
-    function topFaceUpIndex(pile) {
+    function _topFaceUpIndex(pile) {
       // Index of the uppermost face-up card (or -1 if none)
       for (let i = pile.cards.length - 1; i >= 0; i--) {
         if (pile.cards[i].faceUp) return i;
@@ -302,7 +303,7 @@
       if (window.Engine?.draw) window.Engine.draw();
     }
 
-    function tryMove(srcPileId, cardIndex, dstPileId) {
+    function _tryMove(srcPileId, cardIndex, dstPileId) {
       if (window.Engine?.move) {
         window.Engine.move({ srcPileId, cardIndex, dstPileId });
       } else {

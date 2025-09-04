@@ -72,10 +72,13 @@ test('does not draw from stock automatically', () => {
   assert.equal(st.piles.waste.cards.length, 0);
 });
 
-test('chains multiple moves from tableau and waste', () => {
+test('chains multiple moves from tableau and waste when safe', () => {
   Engine.newGame(TEST_SETTINGS);
   const st = Engine.getState();
   st.piles = emptyPiles();
+  // Advance red foundations so that 4♠ is safe to move
+  st.piles.foundations[1].cards = [card('H',1), card('H',2), card('H',3)];
+  st.piles.foundations[2].cards = [card('D',1), card('D',2), card('D',3)];
   st.piles.foundations[0].cards = [card('S',1)];
   st.piles.tableau[0].cards = [card('S',2,true)];
   st.piles.tableau[1].cards = [card('S',3,true)];
@@ -87,4 +90,24 @@ test('chains multiple moves from tableau and waste', () => {
   assert.equal(st.piles.tableau[0].cards.length, 0);
   assert.equal(st.piles.tableau[1].cards.length, 0);
   assert.equal(st.piles.waste.cards.length, 0);
+});
+
+test('skips unsafe foundation moves', () => {
+  Engine.newGame(TEST_SETTINGS);
+  const st = Engine.getState();
+  st.piles = emptyPiles();
+  // Clubs foundation ready for a 3♣
+  st.piles.foundations[3].cards = [card('C',1), card('C',2)];
+  // Opposite colour foundations have not reached rank 2
+  st.piles.foundations[1].cards = [card('H',1)];
+  st.piles.foundations[2].cards = [];
+  // Tableau exposes the 3♣ which would be legal but unsafe
+  st.piles.tableau[0].cards = [card('C',3,true)];
+
+  Engine.autoMoveToFoundations();
+
+  // 3♣ should remain on the tableau because the move is unsafe
+  assert.equal(st.piles.foundations[3].cards.length, 2);
+  assert.equal(st.piles.tableau[0].cards.length, 1);
+  assert.equal(st.piles.tableau[0].cards[0].rank, 3);
 });

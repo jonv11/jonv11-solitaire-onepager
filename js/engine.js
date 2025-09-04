@@ -339,6 +339,26 @@
       }
     }
 
+    // Determine if moving the given card to its foundation is "safe".
+    // A move is considered safe when neither opposite-color suit
+    // requires this card for further tableau play. We approximate this by
+    // ensuring that both opposite-color foundations have progressed to at
+    // least the card's rank minus one.
+    function isSafeFoundationMove(card) {
+      // Suits of the opposite colour. Red -> clubs/spades, black -> hearts/diamonds
+      if (card.rank <= 2) return true; // Aces and Twos never block play
+      const opp = Model.isRed(card.suit) ? ["C", "S"] : ["H", "D"];
+      // Lowest rank currently on the opposite-colour foundations
+      const lowestOppRank = Math.min(
+        ...opp.map((s) => {
+          const f = state.piles.foundations.find((x) => x.suit === s);
+          const top = f.cards.length ? f.cards[f.cards.length - 1].rank : 0;
+          return top;
+        })
+      );
+      return card.rank <= lowestOppRank + 1;
+    }
+
     // Automatically move any available top cards to their foundations.
     // Returns the number of cards moved.
     function autoMoveToFoundations() {
@@ -353,7 +373,10 @@
           const c = top(t);
           if (!c || !c.faceUp) continue;
           const f = state.piles.foundations.find((x) => x.suit === c.suit);
-          if (Model.canDropOnFoundation(c, top(f), f.suit)) {
+          if (
+            Model.canDropOnFoundation(c, top(f), f.suit) &&
+            isSafeFoundationMove(c)
+          ) {
             move({ srcPileId: t.id, cardIndex: t.cards.length - 1, dstPileId: f.id });
             moved++;
             changed = true;
@@ -367,7 +390,10 @@
         if (w.cards.length) {
           const c = top(w);
           const f = state.piles.foundations.find((x) => x.suit === c.suit);
-          if (Model.canDropOnFoundation(c, top(f), f.suit)) {
+          if (
+            Model.canDropOnFoundation(c, top(f), f.suit) &&
+            isSafeFoundationMove(c)
+          ) {
             move({ srcPileId: w.id, cardIndex: w.cards.length - 1, dstPileId: f.id });
             moved++;
             changed = true;

@@ -339,6 +339,47 @@
       }
     }
 
+    // Automatically move any available top cards to their foundations.
+    // Returns the number of cards moved.
+    function autoMoveToFoundations() {
+      if (!state) return 0;
+      const top = (p) => p.cards[p.cards.length - 1] || null;
+      let moved = 0;
+      let changed;
+      do {
+        changed = false;
+        // Try tableau piles first
+        for (const t of state.piles.tableau) {
+          const c = top(t);
+          if (!c || !c.faceUp) continue;
+          const f = state.piles.foundations.find((x) => x.suit === c.suit);
+          if (Model.canDropOnFoundation(c, top(f), f.suit)) {
+            move({ srcPileId: t.id, cardIndex: t.cards.length - 1, dstPileId: f.id });
+            moved++;
+            changed = true;
+            break; // re-evaluate from the start after each move
+          }
+        }
+        if (changed) continue;
+
+        // Then waste pile
+        const w = state.piles.waste;
+        if (w.cards.length) {
+          const c = top(w);
+          const f = state.piles.foundations.find((x) => x.suit === c.suit);
+          if (Model.canDropOnFoundation(c, top(f), f.suit)) {
+            move({ srcPileId: w.id, cardIndex: w.cards.length - 1, dstPileId: f.id });
+            moved++;
+            changed = true;
+          }
+        }
+        // Stock is not automatically drawn; avoid peeking at hidden cards
+        // to preserve classic gameplay and prevent unfair advantage.
+        // Auto moves only consider tableau and waste piles.
+      } while (changed);
+      return moved;
+    }
+
     // ---------- Pure helpers exposed for solver ----------
 
     function listLegalMoves(st) {
@@ -517,6 +558,7 @@
       // Exposed for unit tests
       _findHint: findHintInState,
       autoMoveOne,
+      autoMoveToFoundations,
       undo,
       redo,
       // solver helpers

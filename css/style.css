@@ -355,7 +355,8 @@ output {
     --gap: 8px;
     --card-w: 70px;
     --card-h: 100px;
-    --tab-overlap: 26px;
+    /* Extra vertical offset so enlarged corners stay visible */
+    --tab-overlap: 30px;
     --waste-overlap: 1px;
     --radius: 8px;
   }
@@ -366,11 +367,12 @@ output {
     box-shadow: 0 4px 10px var(--shadow);
   }
   .card .corner {
-    font-size: 20px;
-    width: 24px;
+    font-size: 22px; /* Compensate for hidden bottom-right */
+    width: 26px;
   }
   .card .center {
     font-size: 52px;
+    transform: translateY(4px); /* Lower symbol for balance */
   }
   .game {
     padding: 8px;
@@ -379,15 +381,17 @@ output {
 }
 
 /* ===== Ultra-compact: very narrow phones ===== */
-@media (max-width: 360px) {
+@media (max-width: 360px) and (orientation: portrait) {
   :root {
     --card-w: 64px;
     --card-h: 92px;
-    --tab-overlap: 26px;
+    /* Maintain larger stacking gap for legibility */
+    --tab-overlap: 30px;
     --gap: 6px;
   }
   .card .center {
     font-size: 46px;
+    transform: translateY(4px);
   }
 }
 

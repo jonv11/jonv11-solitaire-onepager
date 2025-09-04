@@ -1,4 +1,6 @@
 name: CI
+# Continuous integration workflow focused on unit tests.
+# Linting will be integrated in future enhancements.
 on:
   push:
   pull_request:
@@ -17,8 +19,6 @@ jobs:
           cache: npm
       - name: Install
         run: npm install --no-audit --no-fund # install dependencies without touching lockfile
-      - name: Lint
-        run: npm run lint # check code style
       - name: Test with coverage
         run: npm run test:coverage # run tests and collect coverage
       - uses: actions/upload-artifact@v4

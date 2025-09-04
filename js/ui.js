@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* jonv11-solitaire-onepager - js/ui.js
    UI rendering + interactions.
-   - Click stock to draw.
+   - Tap or click stock to draw.
    - Click source pile then destination pile to request a move.
    - Basic drag visuals; drops call Engine.move if present.
    Engine is responsible for rule validation and state updates.
@@ -58,10 +58,9 @@
         pile.cards.forEach((c, i) => el.appendChild(makeCardEl(c, i, pile)));
       });
 
-      // stock click → draw
+      // stock tap → draw (pointer events work for mouse + touch)
       const stockEl = document.getElementById("stock");
-      stockEl &&
-        stockEl.addEventListener("click", onStockClick, { passive: false });
+      stockEl && stockEl.addEventListener("pointerup", onStockClick);
     }
 
     function applyDeltas(_deltas, st) {

@@ -233,13 +233,14 @@ const refs = {
       const st = Engine.getState && Engine.getState();
       if (!st) return;
 
-      // Auto-complete only when no stock cards remain and all tableau cards are face-up
       const stockHasCards = st.piles.stock.cards.length > 0;
       const hiddenInTableau = st.piles.tableau.some((p) =>
         p.cards.some((c) => !c.faceUp),
       );
+
       if (stockHasCards || hiddenInTableau) {
-        UI.toast("Auto-complete not safe yet");
+        // Early in the game: move any available cards to foundations
+        Engine.autoMoveToFoundations?.();
         return;
       }
 

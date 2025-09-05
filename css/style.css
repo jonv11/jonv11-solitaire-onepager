@@ -11,6 +11,12 @@
   --radius: 10px;
   --line: 2px;
 
+  /* Shared UI measurements */
+  --ui-gap: 8px;
+  --ui-radius: 8px;
+  --ui-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --ui-transition: 0.2s ease;
+
   /* Overlaps */
   --tab-overlap: 28px; /* vertical fan for tableau */
   --waste-overlap: 4px; /* horizontal fan for waste */
@@ -67,14 +73,177 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-header,
-footer {
-  padding: 8px 12px;
+body.modal-open {
+  overflow: hidden;
 }
-h1 {
+
+/* Reset default margins for headings */
+h1,
+h2,
+h3 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+}
+
+/* ===== Non-board UI ===== */
+.top-bar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--ui-gap);
+  gap: var(--ui-gap);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+.top-bar__block {
+  flex: 1;
+  text-align: center;
+}
+.top-bar__block:first-child {
+  text-align: left;
+}
+.top-bar__block:last-child {
+  text-align: right;
+}
+.top-bar output {
+  display: block;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--ui-gap);
+  padding-bottom: calc(var(--ui-gap) + env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+.action-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px;
+  border-radius: var(--ui-radius);
+  cursor: pointer;
+}
+.action-btn:focus {
+  outline: 2px solid var(--outline);
+  outline-offset: 2px;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.popup-overlay.show {
+  display: flex;
+}
+.popup {
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  border: var(--line) solid var(--outline);
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+  max-width: 90%;
+  max-height: 80%;
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+}
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--ui-gap);
+  border-bottom: var(--line) solid var(--pile-border);
+}
+.popup-content {
+  padding: var(--ui-gap);
+  overflow-y: auto;
+}
+.popup-close {
+  background: none;
+  border: none;
+  color: inherit;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.popup-close:focus {
+  outline: 2px solid var(--outline);
+  outline-offset: 2px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ui-gap);
+  padding: 8px 0;
+}
+.row + .row {
+  border-top: var(--line) solid var(--pile-border);
+}
+.toggle-input {
+  appearance: none;
+  width: 42px;
+  height: 24px;
+  background: #555;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background var(--ui-transition);
+}
+.toggle-input:before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform var(--ui-transition);
+}
+.toggle-input:checked {
+  background: var(--outline);
+}
+.toggle-input:checked:before {
+  transform: translateX(18px);
+}
+.toggle-input:focus {
+  outline: 2px solid var(--outline);
+  outline-offset: 2px;
+}
+
+.slider-row input[type="range"] {
+  width: 100%;
 }
 
 /* ===== Board layout ===== */
@@ -82,6 +251,7 @@ h1 {
   display: grid;
   gap: var(--gap);
   padding: var(--gap);
+  padding-bottom: calc(var(--gap) + 80px);
   max-width: 1200px;
   margin: 0 auto;
   touch-action: none; /* Capture touches to prevent iOS Safari swipe-back */
@@ -740,26 +910,11 @@ body {
 }
 
 /* ===== Stats panel ===== */
-#statsPanel {
-  /* centered overlay with dark translucent background */
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 90%;
-  padding: 1em;
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  border: var(--line) solid var(--outline);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  display: none; /* hidden until toggled */
-}
-#statsPanel p {
+/* Stats panel uses shared .popup styles */
+.popup p {
   margin: 0.25em 0;
 }
-#statsPanel .stats-actions {
+.stats-actions {
   margin-top: 0.5em;
   display: flex;
   flex-wrap: wrap;

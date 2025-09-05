@@ -12,75 +12,18 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header>
-      <h1 aria-label="Klondike Solitaire">Solitaire</h1>
-      <nav class="toolbar" aria-label="Game toolbar">
-        <button id="newGame" class="btn" aria-label="Start a new game">
-          New
-        </button>
-        <button id="undo" class="btn" aria-label="Undo last move">Undo</button>
-        <button id="redo" class="btn" aria-label="Redo last undone move">
-          Redo
-        </button>
-        <button id="hint" class="btn" aria-label="Show a hint">Hint</button>
-        <button id="auto" class="btn" aria-label="Auto-complete when safe">
-          Auto
-        </button>
-
-        <details id="opts" class="opts">
-          <summary class="btn" aria-controls="opts-panel" aria-expanded="false">
-            Options
-          </summary>
-          <div id="opts-panel" class="opts-panel">
-            <div class="select">
-              <label for="drawCount">Draw</label>
-              <select id="drawCount" aria-label="Draw count">
-                <option value="1">1</option>
-                <option value="3" selected>3</option>
-              </select>
-            </div>
-            <div class="select">
-              <label for="redealPolicy">Redeal</label>
-              <select id="redealPolicy" aria-label="Redeal policy">
-                <option value="unlimited" selected>Unlimited</option>
-                <option value="limited(1)">1</option>
-                <option value="limited(3)">3</option>
-                <option value="none">None</option>
-              </select>
-            </div>
-            <div class="toggle">
-              <input type="checkbox" id="leftHandMode" />
-              <label for="leftHandMode">Left-hand</label>
-            </div>
-            <div class="toggle">
-              <input type="checkbox" id="hints" checked />
-              <label for="hints">Hints</label>
-            </div>
-            <div class="toggle">
-              <input type="checkbox" id="autoComplete" checked />
-              <label for="autoComplete">Auto</label>
-            </div>
-            <div class="toggle">
-              <input type="checkbox" id="animations" checked />
-              <label for="animations">Anim</label>
-            </div>
-            <div class="toggle">
-              <input type="checkbox" id="sound" />
-              <label for="sound">Sound</label>
-            </div>
-          </div>
-        </details>
-      </nav>
-    </header>
-
-    <footer aria-label="Status bar">
-      <output id="score" for="game" aria-live="polite">Score: 0</output>
-      <span aria-hidden="true"> · </span>
-      <output id="moves" for="game" aria-live="polite">Moves: 0</output>
-      <span aria-hidden="true"> · </span>
-      <output id="time" for="game" aria-live="polite">Time: 00:00</output>
+    <header class="top-bar" aria-label="Game status">
+      <div class="top-bar__block">
+        <output id="score" for="game" aria-live="polite">Score: 0</output>
+      </div>
+      <div class="top-bar__block">
+        <output id="moves" for="game" aria-live="polite">Moves: 0</output>
+      </div>
+      <div class="top-bar__block">
+        <output id="time" for="game" aria-live="polite">Time: 00:00</output>
+      </div>
       <div id="live" class="sr-only" aria-live="polite"></div>
-    </footer>
+    </header>
 
     <main id="game" class="game" role="main" aria-label="Klondike board">
       <!-- Top row: stock, waste, foundations -->
@@ -210,6 +153,79 @@
         ></div>
       </section>
     </main>
+    <nav class="toolbar action-bar" aria-label="Game actions">
+      <button id="btnOptions" class="action-btn" aria-haspopup="dialog" aria-label="Show options">
+        <span class="icon" aria-hidden="true">⚙️</span>
+        <span class="label">Options</span>
+      </button>
+      <button id="newGame" class="action-btn" aria-label="Start a new game">
+        <span class="icon" aria-hidden="true">🔄</span>
+        <span class="label">New</span>
+      </button>
+      <button id="auto" class="action-btn" aria-label="Auto-complete when safe">
+        <span class="icon" aria-hidden="true">🤖</span>
+        <span class="label">Auto</span>
+      </button>
+      <button id="hint" class="action-btn" aria-label="Show a hint">
+        <span class="icon" aria-hidden="true">💡</span>
+        <span class="label">Hint</span>
+      </button>
+      <button id="undo" class="action-btn" aria-label="Undo last move">
+        <span class="icon" aria-hidden="true">↩️</span>
+        <span class="label">Undo</span>
+      </button>
+    </nav>
+
+    <div id="optionsPopup" class="popup-overlay" hidden>
+      <div class="popup" role="dialog" aria-modal="true" aria-labelledby="optionsTitle">
+        <div class="popup-header">
+          <h2 id="optionsTitle">Options</h2>
+          <button class="popup-close" aria-label="Close options">&times;</button>
+        </div>
+        <div class="popup-content">
+          <div class="row select-row">
+            <label for="drawCount">Draw</label>
+            <select id="drawCount" aria-label="Draw count">
+              <option value="1">1</option>
+              <option value="3" selected>3</option>
+            </select>
+          </div>
+          <div class="row select-row">
+            <label for="redealPolicy">Redeal</label>
+            <select id="redealPolicy" aria-label="Redeal policy">
+              <option value="unlimited" selected>Unlimited</option>
+              <option value="limited(1)">1</option>
+              <option value="limited(3)">3</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="row toggle-row">
+            <label for="leftHandMode">Left-hand</label>
+            <input type="checkbox" id="leftHandMode" class="toggle-input" />
+          </div>
+          <div class="row toggle-row">
+            <label for="hints">Hints</label>
+            <input type="checkbox" id="hints" class="toggle-input" checked />
+          </div>
+          <div class="row toggle-row">
+            <label for="autoComplete">Auto</label>
+            <input type="checkbox" id="autoComplete" class="toggle-input" checked />
+          </div>
+          <div class="row toggle-row">
+            <label for="animations">Anim</label>
+            <input type="checkbox" id="animations" class="toggle-input" checked />
+          </div>
+          <div class="row toggle-row">
+            <label for="sound">Sound</label>
+            <input type="checkbox" id="sound" class="toggle-input" />
+          </div>
+          <div class="row slider-row">
+            <label for="animSpeed">Speed</label>
+            <input type="range" id="animSpeed" min="0" max="100" value="50" />
+          </div>
+        </div>
+      </div>
+    </div>
 
     <noscript>
       <p>This app requires JavaScript enabled.</p>
@@ -222,8 +238,10 @@
       crossorigin="anonymous"
     ></script>
     <script src="js/store.js"></script>
+    <script src="js/popup.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/stats-ui.js"></script>
+    <script src="js/options-ui.js"></script>
     <script src="js/model.js"></script>
     <script src="js/emitter.js"></script>
     <script src="js/engine.js"></script>

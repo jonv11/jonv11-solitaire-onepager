@@ -57,6 +57,13 @@ All 52 cards placed on foundations.
 
 ---
 
+## Non-board UI
+
+The top status bar, action bar and modal popups share styling helpers.
+See [docs/non-board-ui.md](docs/non-board-ui.md) for class names and programmatic control.
+
+---
+
 ## Auto-complete
 
 When a win is certain and only moves to the foundations remain, the game can finish for you. Press the **Auto** button or `A` key to trigger automatic play-out. The engine then moves every remaining card to its foundation in order—similar to "auto-finish" in classic Solitaire apps—granting any time bonus and ending the round without further input.

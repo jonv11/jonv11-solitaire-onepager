@@ -1,7 +1,7 @@
 /* jonv11-solitaire-onepager - js/stats-ui.js
-   Minimal overlay panel displaying statistics from SoliStats.
+   Overlay panel displaying statistics from SoliStats.
 */
-/* global SoliStats */
+/* global SoliStats, Popup */
 (function(){
   'use strict';
 
@@ -15,18 +15,25 @@
     return m+":"+ss;
   }
 
-  // Build panel DOM once. Styling is defined in css/style.css for maintainability.
-  const panel = document.createElement('div');
-  panel.id = 'statsPanel';
-  panel.innerHTML = `
-    <div id="statsContent"></div>
-    <div class="stats-actions">
-      <button id="statsExport" class="btn">Export</button>
-      <button id="statsImport" class="btn">Import</button>
-      <button id="statsReset" class="btn">Reset</button>
-      <button id="statsClose" class="btn">Close</button>
+  // Build overlay and panel
+  const overlay = document.createElement('div');
+  overlay.id = 'statsOverlay';
+  overlay.className = 'popup-overlay';
+  overlay.innerHTML = `
+    <div class="popup" role="dialog" aria-modal="true" aria-labelledby="statsTitle">
+      <div class="popup-header">
+        <h2 id="statsTitle">Stats</h2>
+        <button class="popup-close" id="statsClose" aria-label="Close stats">&times;</button>
+      </div>
+      <div id="statsContent" class="popup-content"></div>
+      <div class="stats-actions">
+        <button id="statsExport" class="btn">Export</button>
+        <button id="statsImport" class="btn">Import</button>
+        <button id="statsReset" class="btn">Reset</button>
+      </div>
     </div>`;
-  document.body.appendChild(panel);
+  document.body.appendChild(overlay);
+  Popup.trapFocus(overlay);
 
   function render(){
     const agg = SoliStats.loadAgg().g;
@@ -47,11 +54,11 @@
       `<p>Avg recycles: ${agg.avgRecycles}</p>`;
   }
 
-  function show(){ render(); panel.style.display='block'; }
-  function hide(){ panel.style.display='none'; }
+  function show(opener){ render(); Popup.open(overlay, opener); }
+  function hide(){ Popup.close(overlay); }
 
-  $('#statsClose', panel).addEventListener('click', hide);
-  $('#statsExport', panel).addEventListener('click', () => {
+  $('#statsClose', overlay).addEventListener('click', hide);
+  $('#statsExport', overlay).addEventListener('click', () => {
     const blob = new Blob([SoliStats.exportAll()], {type:'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -59,7 +66,7 @@
     a.click();
     URL.revokeObjectURL(a.href);
   });
-  $('#statsImport', panel).addEventListener('click', () => {
+  $('#statsImport', overlay).addEventListener('click', () => {
     const inp = document.createElement('input');
     inp.type = 'file';
     inp.accept = 'application/json';
@@ -68,18 +75,13 @@
       if (!file) return;
       const r = new FileReader();
       r.onload = () => {
-        try {
-          SoliStats.importAll(r.result, 'merge');
-          render();
-        } catch (err) {
-          /* no-op */
-        }
+        try { SoliStats.importAll(r.result, 'merge'); render(); } catch (err) { /* no-op */ }
       };
       r.readAsText(file);
     };
     inp.click();
   });
-  $('#statsReset', panel).addEventListener('click', () => {
+  $('#statsReset', overlay).addEventListener('click', () => {
     if (confirm('Reset all stats?')) {
       const ks = ['soli.v1.meta','soli.v1.sessions','soli.v1.stats','soli.v1.current'];
       ks.forEach((k)=>SoliStats.safeRemove(k));
@@ -91,11 +93,12 @@
   function initButton(){
     const btn = document.createElement('button');
     btn.id = 'statsBtn';
-    btn.className = 'btn';
-    btn.textContent = 'Stats';
+    btn.className = 'action-btn';
+    btn.setAttribute('aria-label','Show stats');
+    btn.innerHTML = '<span class="icon" aria-hidden="true">📊</span><span class="label">Stats</span>';
     const bar = document.querySelector('nav.toolbar');
     if (bar) bar.appendChild(btn);
-    btn.addEventListener('click', show);
+    btn.addEventListener('click', e => show(e.currentTarget));
   }
 
   initButton();

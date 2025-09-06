@@ -226,48 +226,23 @@ const refs = {
         }
       }
     }
-    // Automatically play all remaining cards to foundations when safe
-    function autoComplete() {
-      if (!settings.autoComplete) return; // feature disabled via settings
-
-      const st = Engine.getState && Engine.getState();
-      if (!st) return;
-
-      const stockHasCards = st.piles.stock.cards.length > 0;
-      const hiddenInTableau = st.piles.tableau.some((p) =>
-        p.cards.some((c) => !c.faceUp),
-      );
-
-      if (stockHasCards || hiddenInTableau) {
-        // Early in the game: move any available cards to foundations
-        Engine.autoMoveToFoundations?.();
-        return;
+    // Automatically play all remaining safe cards to foundations
+    let autoRunning = false;
+    async function autoComplete() {
+      if (!settings.autoComplete || autoRunning) return;
+      const btn = refs.btnAuto;
+      autoRunning = true;
+      if (btn) btn.disabled = true;
+      try {
+        const res = await Engine.runAutoToFixpoint?.();
+        if (res && res.moves === 0) UI.toast("No automatic moves available.");
+      } catch (err) {
+        console.error(err);
+        UI.toast && UI.toast("Auto stopped due to error. See console.");
+      } finally {
+        if (btn) btn.disabled = false;
+        autoRunning = false;
       }
-
-      // Recursive step: move one card at a time with a small delay
-      const step = () => {
-        const move = Engine.findHint && Engine.findHint();
-        if (move && move.dstPileId.startsWith("foundation")) {
-          // When animations are enabled, visually move the card first
-          if (settings.animations && UI.animateMove) {
-            UI.animateMove(move)
-              .then(() => {
-                Engine.move(move);
-                setTimeout(step, 0); // next step immediately after rendering
-                return undefined;
-              })
-              .catch((err) => {
-                console.error(err);
-              });
-          } else {
-            Engine.move(move);
-            const delay = settings.animations ? 200 : 0;
-            setTimeout(step, delay);
-          }
-        }
-      };
-
-      step();
     }
 
     // Event wires

@@ -595,8 +595,10 @@
     function isLegalFoundationMove(card, foundations) {
       const f = foundations.find((x) => x.suit === card.suit);
       if (!f) return false;
+      // An Ace can start an empty foundation of the same suit
+      if (f.cards.length === 0) return card.rank === 1;
       const top = f.cards[f.cards.length - 1];
-      if (!top) return card.rank === 1;
+      // Otherwise, only the next rank of the same suit is legal
       return card.rank === top.rank + 1;
     }
 
@@ -651,10 +653,12 @@
           state.settings.animations && (globalThis.AUTO_ANIMATE ?? true);
         const animMs = globalThis.AUTO_ANIM_DURATION_MS ?? 200;
         while (iterations < 1000 && moves < 500) {
+          const hash = stateHash(state);
           const next = findNextFoundationMoves(state);
           if (!next.length) break;
           const mv = next[0];
-          logAuto("iter", iterations + 1, "move", mv);
+          // Log iteration, current state hash, and chosen move when debugging
+          logAuto("iter", iterations + 1, "hash", hash, "move", mv);
           let p = Promise.resolve();
           if (animate && globalThis.UI?.animateMove)
             p = globalThis.UI.animateMove(mv, animMs);

@@ -169,8 +169,8 @@
         tableau[col].cards.push(c);
       }
     }
-    const stock = { id:'STOCK', kind:'stock', cards: deck };
-    const waste = { id:'WASTE', kind:'waste', cards: [] };
+    const stock = { id:'stock', kind:'stock', cards: deck };
+    const waste = { id:'waste', kind:'waste', cards: [] };
     const foundations = makeFoundations();
 
     /** @type {GameState} */

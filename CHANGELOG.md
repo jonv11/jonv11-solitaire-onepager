@@ -14,6 +14,7 @@
 - Auto now moves any legal next-rank card to its foundation (e.g., 3 onto 2)
 - Auto now moves Aces to empty suit foundations and includes comprehensive foundation tests
 - Auto runner guarded against re-entrancy and infinite loops
+- Auto runner id for pile was wrongly set to 'WASTE' instead of 'waste' (same for STOCK)
 
 ## [0.1.0] - 2025-09-03
 

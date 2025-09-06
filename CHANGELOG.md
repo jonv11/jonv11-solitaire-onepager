@@ -2,12 +2,15 @@
 
 ### Added
 
+- Sequential animations for automatic foundation moves
+
 ### Changed
 
 ### Fixed
 
 - Counting an in-progress game as a loss when starting a new one
 - Auto button no longer hangs; auto-play now moves safe cards to foundations deterministically and terminates
+- Auto now moves any legal next-rank card to its foundation (e.g., 3 onto 2)
 
 ## [0.1.0] - 2025-09-03
 

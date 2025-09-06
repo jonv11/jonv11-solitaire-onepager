@@ -89,7 +89,7 @@ test('terminates quickly when no moves available', async () => {
   st.piles = emptyPiles();
   const res = await Engine.runAutoToFixpoint();
   assert.equal(res.moves, 0);
-  assert.equal(res.iterations >= 1, true);
+  assert.equal(res.iterations, 0);
 });
 
 test('re-entrancy guard prevents concurrent runs', async () => {
@@ -104,4 +104,42 @@ test('re-entrancy guard prevents concurrent runs', async () => {
   assert.equal(r1.moves, 1);
   assert.equal(r2.moves, 0);
   assert.equal(st.piles.foundations[0].cards.length, 2);
+});
+
+test('auto moves 3H onto 2H from tableau', async () => {
+  const st = loadFixture('auto-3-on-2');
+  const res = await Engine.runAutoToFixpoint();
+  assert.equal(res.moves, 1);
+  const hf = st.piles.foundations.find((f) => f.suit === 'H');
+  assert.equal(hf.cards[hf.cards.length - 1].rank, 3);
+  assert.equal(st.piles.tableau[0].cards.length, 0);
+});
+
+test('auto moves chain across suits', async () => {
+  Engine.newGame(TEST_SETTINGS);
+  const st = Engine.getState();
+  st.piles = emptyPiles();
+  st.piles.foundations.find((f) => f.suit === 'S').cards = [card('S', 1), card('S', 2)];
+  st.piles.foundations.find((f) => f.suit === 'H').cards = [card('H', 1), card('H', 2)];
+  st.piles.foundations.find((f) => f.suit === 'D').cards = [card('D', 1), card('D', 2)];
+  st.piles.waste.cards = [card('S', 3, true)];
+  st.piles.tableau[0].cards = [card('D', 3, true)];
+  st.piles.tableau[1].cards = [card('H', 3, true)];
+  const res = await Engine.runAutoToFixpoint();
+  assert.equal(res.moves, 3);
+  assert.equal(st.piles.foundations.find((f) => f.suit === 'S').cards.length, 3);
+  assert.equal(st.piles.foundations.find((f) => f.suit === 'H').cards.length, 3);
+  assert.equal(st.piles.foundations.find((f) => f.suit === 'D').cards.length, 3);
+});
+
+test('auto does not jump ranks', async () => {
+  Engine.newGame(TEST_SETTINGS);
+  const st = Engine.getState();
+  st.piles = emptyPiles();
+  st.piles.foundations.find((f) => f.suit === 'H').cards = [card('H', 1), card('H', 2)];
+  st.piles.tableau[0].cards = [card('H', 4, true)];
+  const res = await Engine.runAutoToFixpoint();
+  assert.equal(res.moves, 0);
+  assert.equal(st.piles.foundations.find((f) => f.suit === 'H').cards.length, 2);
+  assert.equal(st.piles.tableau[0].cards.length, 1);
 });

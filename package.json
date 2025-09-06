@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test/*.test.js",
+    "test": "node --test --import=./test/setup-globals.js test/*.test.js",
     "test:auto": "jest tests/auto.spec.js tests/auto.ui.spec.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

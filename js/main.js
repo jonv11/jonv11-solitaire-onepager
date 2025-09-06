@@ -31,6 +31,9 @@
     hints: true,
     autoComplete: true,
     sound: false,
+    // Time penalty configuration
+    timePenaltyPoints: 2,
+    timePenaltySecs: 10,
   });
 
   const _KEYS = Object.freeze({

@@ -4,6 +4,7 @@
 
 - Sequential animations for automatic foundation moves
 - Jest-based deterministic tests for Auto foundation behavior and UI
+- Standard scoring with time penalties and average score persistence
 
 ### Changed
 

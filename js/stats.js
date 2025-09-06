@@ -36,9 +36,11 @@
       sumTime:0,
       sumMoves:0,
       sumRecycles:0,
+      sumScore:0,
       avgTime:0,
       avgMoves:0,
       avgRecycles:0,
+      avgScore:0,
       histT:[0,0,0,0,0],
       histM:[0,0,0,0,0]
     };
@@ -104,7 +106,13 @@
   // ---------- load helpers
   function loadMeta(){ meta = safeGet(KEYS.meta, { ver:1, n: cfg.n }); return meta; }
   function loadSessions(){ sessions = safeGet(KEYS.sessions, []); return sessions; }
-  function loadAgg(){ aggregates = safeGet(KEYS.stats, { g:initAgg(), d1:initAgg(), d3:initAgg() }); return aggregates; }
+  function loadAgg(){
+    aggregates = safeGet(KEYS.stats, { g:initAgg(), d1:initAgg(), d3:initAgg() });
+    for (const k of ['g','d1','d3']) {
+      aggregates[k] = Object.assign(initAgg(), aggregates[k] || {});
+    }
+    return aggregates;
+  }
 
   // ---------- API
   function initStats(config){
@@ -149,9 +157,11 @@
     agg.sumTime += sum.t || 0;
     agg.sumMoves += sum.m || 0;
     agg.sumRecycles += sum.rv || 0;
+    agg.sumScore += sum.sc || 0;
     agg.avgTime = agg.played ? Math.round(agg.sumTime / agg.played) : 0;
     agg.avgMoves = agg.played ? Math.round(agg.sumMoves / agg.played) : 0;
     agg.avgRecycles = agg.played ? Math.round(agg.sumRecycles / agg.played) : 0;
+    agg.avgScore = agg.played ? agg.sumScore / agg.played : 0;
     agg.histT[bucketTime(sum.t||0)]++;
     agg.histM[bucketMoves(sum.m||0)]++;
   }

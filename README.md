@@ -19,10 +19,11 @@ Klondike Solitaire implemented as a single-page web app. No backend. Offline-cap
 
 ## Auto-play
 
-The **Auto** button moves every safe top card from the waste and tableau to its
-matching foundation. Cards are taken from the waste first, then tableau columns
-from left to right. The routine stops when no legal moves remain or safety caps
-are reached, and the button is re-enabled after completion.
+The **Auto** button moves every legal next-rank card from the waste and tableau
+to its matching foundation. Waste is scanned first, followed by tableau columns
+from left to right. Each applied move animates the card travelling to its
+foundation when animations are enabled. The routine stops when no further
+foundation moves remain and the button is re-enabled after completion.
 
 ---
 

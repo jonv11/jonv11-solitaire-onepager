@@ -537,23 +537,12 @@
       const top = (p) => p.cards[p.cards.length - 1] || null;
       const bySuit = {};
       for (const f of st.piles.foundations) bySuit[f.suit] = f;
-      const rankInFoundation = (s) => bySuit[s].cards.length;
-      const isSafe = (card) => {
-        const r = card.rank;
-        if (r <= 2) return true;
-        const red = Model.isRed(card.suit);
-        const opp = red ? ["S", "C"] : ["H", "D"];
-        if (Math.min(rankInFoundation(opp[0]), rankInFoundation(opp[1])) >= r - 1)
-          return true;
-        if (rankInFoundation(card.suit) >= r + 1) return true;
-        return false;
-      };
 
       const waste = st.piles.waste;
       if (waste.cards.length) {
         const c = top(waste);
         const f = bySuit[c.suit];
-        if (Model.canDropOnFoundation(c, top(f), f.suit) && isSafe(c))
+        if (Model.canDropOnFoundation(c, top(f), f.suit))
           moves.push({
             type: "move",
             src: "waste",
@@ -566,7 +555,7 @@
         if (!t.cards.length) continue;
         const c = top(t);
         const f = bySuit[c.suit];
-        if (c.faceUp && Model.canDropOnFoundation(c, top(f), f.suit) && isSafe(c))
+        if (c.faceUp && Model.canDropOnFoundation(c, top(f), f.suit))
           moves.push({ type: "move", src: t.id, cardIndex: t.cards.length - 1, dst: f.id });
       }
 
@@ -598,17 +587,46 @@
     }
 
     /**
+     * Check if moving `card` to its suit foundation is legal.
+     * Aces start empty foundations; otherwise next rank of same suit.
+     * @param {{rank:number, suit:string}} card
+     * @param {*[]} foundations
+     */
+    function isLegalFoundationMove(card, foundations) {
+      const f = foundations.find((x) => x.suit === card.suit);
+      if (!f) return false;
+      const top = f.cards[f.cards.length - 1];
+      if (!top) return card.rank === 1;
+      return card.rank === top.rank + 1;
+    }
+
+    /**
      * Find all currently legal foundation moves in deterministic order.
-     * Waste is considered first, then tableau columns left-to-right.
+     * Waste top card is considered first, then tableau columns left-to-right.
      * @param {*} st
      * @returns {{srcPileId:string, cardIndex:number, dstPileId:string}[]}
      */
     function findNextFoundationMoves(st) {
-      return enumerateAutoSafeFoundationMoves(st).map((m) => ({
-        srcPileId: m.src,
-        cardIndex: m.cardIndex,
-        dstPileId: m.dst,
-      }));
+      const moves = [];
+      const top = (p) => p.cards[p.cards.length - 1] || null;
+
+      const w = st.piles.waste;
+      if (w.cards.length) {
+        const c = top(w);
+        const f = st.piles.foundations.find((x) => x.suit === c.suit);
+        if (isLegalFoundationMove(c, st.piles.foundations))
+          moves.push({ srcPileId: w.id, cardIndex: w.cards.length - 1, dstPileId: f.id });
+      }
+
+      for (const t of st.piles.tableau) {
+        const c = top(t);
+        if (!c || !c.faceUp) continue;
+        const f = st.piles.foundations.find((x) => x.suit === c.suit);
+        if (isLegalFoundationMove(c, st.piles.foundations))
+          moves.push({ srcPileId: t.id, cardIndex: t.cards.length - 1, dstPileId: f.id });
+      }
+
+      return moves;
     }
 
     const DEBUG_AUTO = !!globalThis.DEBUG_AUTO;
@@ -619,7 +637,8 @@
     let autoRunning = false;
 
     /**
-     * Automatically move all safe cards to foundations until no moves remain.
+     * Automatically move all legal next-rank cards to their foundations.
+     * Moves are animated sequentially when enabled.
      * Returns a summary object with iteration and move counts.
      */
     async function runAutoToFixpoint() {
@@ -628,35 +647,22 @@
       try {
         let iterations = 0;
         let moves = 0;
-        const seen = new Set();
-        while (true) {
-          iterations++;
-          if (iterations > 1000) {
-            logAuto("iteration cap hit");
-            break;
-          }
-          const h = stateHash(state);
-          if (seen.has(h)) {
-            logAuto("repeat state", h);
-            break;
-          }
-          seen.add(h);
-
+        const animate =
+          state.settings.animations && (globalThis.AUTO_ANIMATE ?? true);
+        const animMs = globalThis.AUTO_ANIM_DURATION_MS ?? 200;
+        while (iterations < 1000 && moves < 500) {
           const next = findNextFoundationMoves(state);
-          logAuto("iter", iterations, "hash", h, "moves", next);
           if (!next.length) break;
-
-          for (const mv of next) {
-            move(mv);
-            moves++;
-            if (moves > 500) {
-              logAuto("move cap hit");
-              break;
-            }
-            // Yield to the event loop so the UI can update.
-            await new Promise((r) => setTimeout(r, 0));
-          }
-          if (moves > 500) break;
+          const mv = next[0];
+          logAuto("iter", iterations + 1, "move", mv);
+          let p = Promise.resolve();
+          if (animate && globalThis.UI?.animateMove)
+            p = globalThis.UI.animateMove(mv, animMs);
+          move(mv);
+          moves++;
+          iterations++;
+          await p;
+          if (!animate) await new Promise((r) => setTimeout(r, 0));
         }
         return { moves, iterations };
       } finally {

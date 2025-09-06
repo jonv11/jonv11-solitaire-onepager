@@ -657,8 +657,8 @@
           const next = findNextFoundationMoves(state);
           if (!next.length) break;
           const mv = next[0];
-          // Log iteration, current state hash, and chosen move when debugging
-          logAuto("iter", iterations + 1, "hash", hash, "move", mv);
+          // Log iteration, state hash, available moves, and chosen move when debugging
+          logAuto("iter", iterations + 1, "hash", hash, "moves", next, "applying", mv);
           let p = Promise.resolve();
           if (animate && globalThis.UI?.animateMove)
             p = globalThis.UI.animateMove(mv, animMs);

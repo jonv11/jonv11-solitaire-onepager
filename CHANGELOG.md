@@ -3,6 +3,7 @@
 ### Added
 
 - Sequential animations for automatic foundation moves
+- Jest-based deterministic tests for Auto foundation behavior and UI
 
 ### Changed
 
@@ -12,6 +13,7 @@
 - Auto button no longer hangs; auto-play now moves safe cards to foundations deterministically and terminates
 - Auto now moves any legal next-rank card to its foundation (e.g., 3 onto 2)
 - Auto now moves Aces to empty suit foundations and includes comprehensive foundation tests
+- Auto runner guarded against re-entrancy and infinite loops
 
 ## [0.1.0] - 2025-09-03
 

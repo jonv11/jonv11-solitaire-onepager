@@ -12,15 +12,15 @@ test('Auto button disables during run and updates foundations', async () => {
   globalThis.window = window;
   globalThis.document = window.document;
   globalThis.navigator = window.navigator;
-  const { Engine } = await import('../js/engine.module.js');
+  const { engine } = await import('../js/engine.module.js');
   await import('../js/ui.js');
   const { UI } = globalThis;
-  Engine.on('state', (st) => UI.render(st));
+  engine.on('state', (st) => UI.render(st));
   UI.init(document.getElementById('game'));
 
   const card = (s, r) => ({ id: s + r, rank: r, suit: s, color: ['H', 'D'].includes(s) ? 'red' : 'black', faceUp: true });
-  Engine.newGame({ drawCount: 1, redealPolicy: 'none', leftHandMode: false, animations: true, hints: true, autoComplete: true, sound: false });
-  const st = Engine.getState();
+  engine.newGame({ drawCount: 1, redealPolicy: 'none', leftHandMode: false, animations: true, hints: true, autoComplete: true, sound: false });
+  const st = engine.getState();
   st.piles.foundations.find((f) => f.suit === 'S').cards = [card('S', 1), card('S', 2)];
   st.piles.foundations.find((f) => f.suit === 'H').cards = [card('H', 1), card('H', 2)];
   st.piles.foundations.find((f) => f.suit === 'D').cards = [card('D', 1), card('D', 2)];
@@ -38,7 +38,7 @@ test('Auto button disables during run and updates foundations', async () => {
   const btn = document.getElementById('auto');
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    await Engine.runAutoToFixpoint();
+    await engine.runAutoToFixpoint();
     btn.disabled = false;
   });
 

@@ -12,15 +12,15 @@ test('auto button moves waste Ace to foundation and re-enables', async () => {
   globalThis.window = window;
   globalThis.document = window.document;
   globalThis.navigator = window.navigator;
-  const { Engine } = await import('../js/engine.module.js');
+  const { engine } = await import('../js/engine.module.js');
   await import('../js/ui.js');
   const { UI } = globalThis;
-  Engine.on('state', (st) => UI.render(st));
+  engine.on('state', (st) => UI.render(st));
   UI.init(document.getElementById('game'));
 
   const card = (s, r) => ({ id: s + r, rank: r, suit: s, color: ['H', 'D'].includes(s) ? 'red' : 'black', faceUp: true });
-  Engine.newGame({ drawCount: 1, redealPolicy: 'none', leftHandMode: false, animations: true, hints: true, autoComplete: true, sound: false });
-  const st = Engine.getState();
+  engine.newGame({ drawCount: 1, redealPolicy: 'none', leftHandMode: false, animations: true, hints: true, autoComplete: true, sound: false });
+  const st = engine.getState();
   st.piles.waste.cards = [card('H', 1)];
   st.piles.foundations.forEach((f) => (f.cards = []));
   UI.render(st);
@@ -28,7 +28,7 @@ test('auto button moves waste Ace to foundation and re-enables', async () => {
   const btn = document.getElementById('auto');
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    await Engine.runAutoToFixpoint();
+    await engine.runAutoToFixpoint();
     btn.disabled = false;
   });
 

@@ -9,4 +9,7 @@ g.EventEmitter = Emitter;
 await import('./model.js');
 await import('./engine.js');
 
-export const { Engine, Model } = g;
+// Export both the constructor and a pre-built singleton instance.
+export const Engine = g.EngineCtor;
+export const engine = g.Engine;
+export const Model = g.Model;

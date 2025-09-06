@@ -4,7 +4,7 @@
 */
 (function(){
   "use strict";
-  const SUPPORTED = ["en", "fr"];
+  const SUPPORTED = ["en", "fr", "nl", "es", "de"];
   const DEFAULT_LANG = "en";
   let currentLang = DEFAULT_LANG;
   const resources = {};

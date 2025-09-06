@@ -55,7 +55,7 @@
   * @property {ScoreState} score
    * @property {number} redealsRemaining         // redeals left (Number.MAX_SAFE_INTEGER for unlimited)
   * @property {Array<UndoDelta>} history
-  * @property {{ startedAt: number; elapsedMs: number; }} time
+  * @property {{ startedAt: number; elapsedMs: number; nextPenaltyAt: number; }} time
   */
 
   /**
@@ -180,7 +180,11 @@
       settings,
       score: { total: 0, moves: 0 },
       history: [],
-      time: { startedAt: Date.now(), elapsedMs: 0 }
+      time: {
+        startedAt: Date.now(),
+        elapsedMs: 0,
+        nextPenaltyAt: Date.now() + (settings.timePenaltySecs || 10) * 1000,
+      },
     };
     return st;
   }

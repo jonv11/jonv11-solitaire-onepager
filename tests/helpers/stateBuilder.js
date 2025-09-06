@@ -21,6 +21,9 @@ const TEST_SETTINGS = {
   hints: true,
   autoComplete: true,
   sound: false,
+  // Time penalty defaults for deterministic tests
+  timePenaltyPoints: 2,
+  timePenaltySecs: 10,
 };
 
 /**

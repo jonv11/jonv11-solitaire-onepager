@@ -140,6 +140,9 @@
       state = Model.deal(Math.floor(Math.random() * 1e9), settings);
       // initialize redeal counter based on policy
       state.redealsRemaining = parseRedeals(settings.redealPolicy);
+      // set up next time-penalty trigger
+      const interval = (settings.timePenaltySecs || 10) * 1000;
+      state.time.nextPenaltyAt = state.time.startedAt + interval;
       undoStack = [];
       redoStack = [];
       emit();
@@ -196,9 +199,14 @@
       src.cards.length = cardIndex;
       flipIfNeeded(src);
 
-      // scoring (basic)
-      if (dst.kind === "foundation") state.score.total += 10;
-      if (src.kind === "foundation") state.score.total -= 10;
+      // scoring according to Standard rules
+      if (dst.kind === "foundation") {
+        // Waste→Foundation yields +10, Tableau→Foundation yields +5
+        if (src.kind === "waste") state.score.total += 10;
+        else if (src.kind === "tableau") state.score.total += 5;
+      }
+      // Moving cards out of a foundation costs −5 per card
+      if (src.kind === "foundation") state.score.total -= 5 * cards.length;
       state.score.moves++;
 
       emit();
@@ -302,7 +310,18 @@
 
     function tick() {
       if (!state) return;
-      state.time.elapsedMs = Date.now() - state.time.startedAt;
+      const now = Date.now();
+      state.time.elapsedMs = now - state.time.startedAt;
+      let penalized = false;
+      const interval = (state.settings.timePenaltySecs || 10) * 1000;
+      const points = state.settings.timePenaltyPoints || 2;
+      // Apply time penalties at fixed intervals while the game is not yet won
+      while (!isWin(state) && now >= state.time.nextPenaltyAt) {
+        state.score.total -= points;
+        state.time.nextPenaltyAt += interval;
+        penalized = true;
+      }
+      if (penalized) emit();
       api.emit("tick", state.time);
     }
 

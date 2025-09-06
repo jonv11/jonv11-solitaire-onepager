@@ -51,7 +51,8 @@
       `<p>Best score: ${agg.bestScore??'--'}</p>`+
       `<p>Avg time: ${formatSecs(agg.avgTime)}</p>`+
       `<p>Avg moves: ${agg.avgMoves}</p>`+
-      `<p>Avg recycles: ${agg.avgRecycles}</p>`;
+      `<p>Avg recycles: ${agg.avgRecycles}</p>`+
+      `<p>Avg score: ${Number(agg.avgScore||0).toFixed(1)}</p>`;
   }
 
   function show(opener){ render(); Popup.open(overlay, opener); }

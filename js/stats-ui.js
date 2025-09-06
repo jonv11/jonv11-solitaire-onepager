@@ -1,7 +1,7 @@
 /* jonv11-solitaire-onepager - js/stats-ui.js
    Overlay panel displaying statistics from SoliStats.
 */
-/* global SoliStats, Popup */
+/* global SoliStats, Popup, I18n */
 (function(){
   'use strict';
 
@@ -22,18 +22,19 @@
   overlay.innerHTML = `
     <div class="popup" role="dialog" aria-modal="true" aria-labelledby="statsTitle">
       <div class="popup-header">
-        <h2 id="statsTitle">Stats</h2>
-        <button class="popup-close" id="statsClose" aria-label="Close stats">&times;</button>
+        <h2 id="statsTitle" data-i18n="stats.title"></h2>
+        <button class="popup-close" id="statsClose" data-i18n-attr="aria-label:stats.close.aria">&times;</button>
       </div>
       <div id="statsContent" class="popup-content"></div>
       <div class="stats-actions">
-        <button id="statsExport" class="btn">Export</button>
-        <button id="statsImport" class="btn">Import</button>
-        <button id="statsReset" class="btn">Reset</button>
+        <button id="statsExport" class="btn" data-i18n="stats.export"></button>
+        <button id="statsImport" class="btn" data-i18n="stats.import"></button>
+        <button id="statsReset" class="btn" data-i18n="stats.reset"></button>
       </div>
     </div>`;
   document.body.appendChild(overlay);
   Popup.trapFocus(overlay);
+  if (window.I18n) I18n.apply(overlay);
 
   function render(){
     const agg = SoliStats.loadAgg().g;
@@ -42,17 +43,17 @@
     const rate = played ? ((wins/played)*100).toFixed(1) : '0.0';
     const c = $('#statsContent');
     c.innerHTML = ''+
-      `<p>Played: ${played}</p>`+
-      `<p>Wins: ${wins}</p>`+
-      `<p>Win rate: ${rate}%</p>`+
-      `<p>Current streak: ${agg.winStreak}</p>`+
-      `<p>Best streak: ${agg.bestStreak}</p>`+
-      `<p>Best time: ${formatSecs(agg.bestTime)}</p>`+
-      `<p>Best score: ${agg.bestScore??'--'}</p>`+
-      `<p>Avg time: ${formatSecs(agg.avgTime)}</p>`+
-      `<p>Avg moves: ${agg.avgMoves}</p>`+
-      `<p>Avg recycles: ${agg.avgRecycles}</p>`+
-      `<p>Avg score: ${Number(agg.avgScore||0).toFixed(1)}</p>`;
+      `<p>${I18n.t('stats.played',{value:played})}</p>`+
+      `<p>${I18n.t('stats.wins',{value:wins})}</p>`+
+      `<p>${I18n.t('stats.winRate',{value:rate})}</p>`+
+      `<p>${I18n.t('stats.currentStreak',{value:agg.winStreak})}</p>`+
+      `<p>${I18n.t('stats.bestStreak',{value:agg.bestStreak})}</p>`+
+      `<p>${I18n.t('stats.bestTime',{value:formatSecs(agg.bestTime)})}</p>`+
+      `<p>${I18n.t('stats.bestScore',{value:agg.bestScore??'--'})}</p>`+
+      `<p>${I18n.t('stats.avgTime',{value:formatSecs(agg.avgTime)})}</p>`+
+      `<p>${I18n.t('stats.avgMoves',{value:agg.avgMoves})}</p>`+
+      `<p>${I18n.t('stats.avgRecycles',{value:agg.avgRecycles})}</p>`+
+      `<p>${I18n.t('stats.avgScore',{value:Number(agg.avgScore||0).toFixed(1)})}</p>`;
   }
 
   function show(opener){ render(); Popup.open(overlay, opener); }
@@ -83,7 +84,7 @@
     inp.click();
   });
   $('#statsReset', overlay).addEventListener('click', () => {
-    if (confirm('Reset all stats?')) {
+    if (confirm(I18n.t('stats.reset.confirm'))) {
       const ks = ['soli.v1.meta','soli.v1.sessions','soli.v1.stats','soli.v1.current'];
       ks.forEach((k)=>SoliStats.safeRemove(k));
       SoliStats.initStats();
@@ -91,18 +92,26 @@
     }
   });
 
+  let btn;
   function initButton(){
-    const btn = document.createElement('button');
+    btn = document.createElement('button');
     btn.id = 'statsBtn';
     btn.className = 'action-btn';
-    btn.setAttribute('aria-label','Show stats');
-    btn.innerHTML = '<span class="icon" aria-hidden="true">📊</span><span class="label">Stats</span>';
+    btn.setAttribute('data-i18n-attr','aria-label:toolbar.stats.aria');
+    btn.innerHTML = '<span class="icon" aria-hidden="true">📊</span><span class="label" data-i18n="toolbar.stats"></span>';
     const bar = document.querySelector('nav.toolbar');
     if (bar) bar.appendChild(btn);
+    if (window.I18n) I18n.apply(btn);
     btn.addEventListener('click', e => show(e.currentTarget));
   }
 
   initButton();
+
+  document.addEventListener('languagechange', () => {
+    if (btn && window.I18n) I18n.apply(btn);
+    if (overlay && window.I18n) I18n.apply(overlay);
+    if (overlay.classList.contains('show')) render();
+  });
 
   window.StatsUI = { show, hide };
 })();

@@ -127,6 +127,31 @@ be exported or imported via the **Stats** panel. No data leaves the browser.
 
 ---
 
+## Internationalization
+
+UI strings are stored in `assets/i18n/{lang}.json`. English (`en`) and French (`fr`) are bundled.
+
+**Detection order on first load**
+1. `?lang=xx` query parameter if supported
+2. Saved choice in `localStorage`
+3. Browser languages (`navigator.language` / `navigator.languages`)
+4. Default to English
+
+The chosen language persists in `localStorage`. The query parameter provides a one-time override.
+
+**Adding a language**
+1. Create `assets/i18n/<code>.json` based on existing keys.
+2. Translate all keys from `assets/i18n/en.json`.
+3. Avoid HTML in values unless already safe in the UI.
+4. Test via `?lang=<code>` and by switching through the Options panel.
+
+**Markup rules**
+- Use `data-i18n="key"` for text content.
+- Use `data-i18n-attr="attr:key"` to translate attributes.
+- Dynamic text is translated in JavaScript via `I18n.t()`.
+
+---
+
 ## Data model
 
 ```ts

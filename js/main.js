@@ -2,7 +2,10 @@
    App controller and wiring. Delegates to Engine (rules) and UI (render).
    Safe if Engine/UI/Store are missing: stubs keep the page interactive.
 */
-/* global Store, Engine, SoliStats, UI, Solver */
+/* global Store, Engine, SoliStats, UI, Solver, I18n */
+if (window.I18n) {
+  I18n.init();
+}
 (() => {
   "use strict";
 
@@ -103,9 +106,13 @@ const refs = {
 
     function updateStatus(state) {
       if (refs.score)
-        refs.score.textContent = "Score: " + (state?.score?.total ?? 0);
+        refs.score.textContent = I18n.t("status.score", {
+          value: state?.score?.total ?? 0,
+        });
       if (refs.moves)
-        refs.moves.textContent = "Moves: " + (state?.score?.moves ?? 0);
+        refs.moves.textContent = I18n.t("status.moves", {
+          value: state?.score?.moves ?? 0,
+        });
     }
 
     function formatTime(ms) {
@@ -121,7 +128,9 @@ const refs = {
       timerId = window.setInterval(() => {
         const st = Engine.getState && Engine.getState();
         if (st && refs.time)
-          refs.time.textContent = "Time: " + formatTime(st.time.elapsedMs);
+          refs.time.textContent = I18n.t("status.time", {
+            value: formatTime(st.time.elapsedMs),
+          });
         if (Engine.tick) Engine.tick();
       }, 1000);
     }
@@ -202,7 +211,8 @@ const refs = {
         UI.render(st);
         updateStatus(st);
         Store.saveState(st);
-        if (refs.time) refs.time.textContent = "Time: 00:00"; // reset timer display
+        if (refs.time)
+          refs.time.textContent = I18n.t("status.time", { value: "00:00" }); // reset timer display
         setActionButtonsVisible(true); // show buttons for new game
         startTimer();
       }
@@ -223,9 +233,9 @@ const refs = {
       else {
         const st = Engine.getState && Engine.getState();
         if (st && window.Solver && Solver.isNoHope(JSON.parse(JSON.stringify(st)))) {
-          UI.toast("No hope: proved dead end");
+          UI.toast(I18n.t("toast.noHope"));
         } else {
-          UI.toast("No moves");
+          UI.toast(I18n.t("toast.noMoves"));
         }
       }
     }
@@ -238,10 +248,10 @@ const refs = {
       if (btn) btn.disabled = true;
       try {
         const res = await Engine.runAutoToFixpoint?.();
-        if (res && res.moves === 0) UI.toast("No automatic moves available.");
+        if (res && res.moves === 0) UI.toast(I18n.t("toast.noAuto"));
       } catch (err) {
         console.error(err);
-        UI.toast && UI.toast("Auto stopped due to error. See console.");
+        UI.toast && UI.toast(I18n.t("toast.autoError"));
       } finally {
         if (btn) btn.disabled = false;
         autoRunning = false;
@@ -271,14 +281,16 @@ const refs = {
     Engine.on &&
       Engine.on("tick", (time) => {
         if (refs.time)
-          refs.time.textContent = "Time: " + formatTime(time.elapsedMs);
+          refs.time.textContent = I18n.t("status.time", {
+            value: formatTime(time.elapsedMs),
+          });
       });
 
     Engine.on &&
       Engine.on("win", (st) => {
         stopTimer(); // freeze timer at win time
         setActionButtonsVisible(false); // hide undo/redo/hint buttons
-        UI.toast("You win!"); // notify player
+        UI.toast(I18n.t("toast.win")); // notify player
         if (settings.animations && UI.winAnimation) {
           UI.winAnimation(); // celebrate with falling cards
         }
@@ -307,7 +319,7 @@ const refs = {
       });
     Engine.on &&
       Engine.on("stuck", (st) => {
-        UI.toast("No moves. Stuck.");
+        UI.toast(I18n.t("toast.stuck"));
         if (window.SoliStats) {
           const fu = st.piles.foundations.map((f) => f.cards.length);
           const redealAllowed = (policy) => {
@@ -340,8 +352,22 @@ const refs = {
       hint,
       autoComplete,
       applySettingsToControls,
+      updateStatus,
+      formatTime,
     };
   })();
+
+  document.addEventListener("languagechange", () => {
+    const st = Engine.getState && Engine.getState();
+    if (st) {
+      Controller.updateStatus(st);
+      if (refs.time)
+        refs.time.textContent = I18n.t("status.time", {
+          value: Controller.formatTime(st.time.elapsedMs || 0),
+        });
+    }
+    Controller.applySettingsToControls();
+  });
 
   // ---------- Wire controls
   function wireControls() {

@@ -7,20 +7,20 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1"
     />
     <meta name="color-scheme" content="light dark" />
-    <title>jonv11 Solitaire</title>
+    <title data-i18n="title">jonv11 Solitaire</title>
     <link rel="preload" href="css/style.css" as="style" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header class="top-bar" aria-label="Game status">
       <div class="top-bar__block">
-        <output id="score" for="game" aria-live="polite">Score: 0</output>
+        <output id="score" for="game" aria-live="polite"></output>
       </div>
       <div class="top-bar__block">
-        <output id="moves" for="game" aria-live="polite">Moves: 0</output>
+        <output id="moves" for="game" aria-live="polite"></output>
       </div>
       <div class="top-bar__block">
-        <output id="time" for="game" aria-live="polite">Time: 00:00</output>
+        <output id="time" for="game" aria-live="polite"></output>
       </div>
       <div id="live" class="sr-only" aria-live="polite"></div>
     </header>
@@ -154,74 +154,81 @@
       </section>
     </main>
     <nav class="toolbar action-bar" aria-label="Game actions">
-      <button id="btnOptions" class="action-btn" aria-haspopup="dialog" aria-label="Show options">
+      <button id="btnOptions" class="action-btn" aria-haspopup="dialog" data-i18n-attr="aria-label:toolbar.options.aria">
         <span class="icon" aria-hidden="true">⚙️</span>
-        <span class="label">Options</span>
+        <span class="label" data-i18n="toolbar.options"></span>
       </button>
-      <button id="newGame" class="action-btn" aria-label="Start a new game">
+      <button id="newGame" class="action-btn" data-i18n-attr="aria-label:toolbar.new.aria">
         <span class="icon" aria-hidden="true">🔄</span>
-        <span class="label">New</span>
+        <span class="label" data-i18n="toolbar.new"></span>
       </button>
-      <button id="auto" class="action-btn" aria-label="Auto-complete when safe">
+      <button id="auto" class="action-btn" data-i18n-attr="aria-label:toolbar.auto.aria">
         <span class="icon" aria-hidden="true">🤖</span>
-        <span class="label">Auto</span>
+        <span class="label" data-i18n="toolbar.auto"></span>
       </button>
-      <button id="hint" class="action-btn" aria-label="Show a hint">
+      <button id="hint" class="action-btn" data-i18n-attr="aria-label:toolbar.hint.aria">
         <span class="icon" aria-hidden="true">💡</span>
-        <span class="label">Hint</span>
+        <span class="label" data-i18n="toolbar.hint"></span>
       </button>
-      <button id="undo" class="action-btn" aria-label="Undo last move">
+      <button id="undo" class="action-btn" data-i18n-attr="aria-label:toolbar.undo.aria">
         <span class="icon" aria-hidden="true">↩️</span>
-        <span class="label">Undo</span>
+        <span class="label" data-i18n="toolbar.undo"></span>
       </button>
     </nav>
 
     <div id="optionsPopup" class="popup-overlay" hidden>
       <div class="popup" role="dialog" aria-modal="true" aria-labelledby="optionsTitle">
         <div class="popup-header">
-          <h2 id="optionsTitle">Options</h2>
-          <button class="popup-close" aria-label="Close options">&times;</button>
+          <h2 id="optionsTitle" data-i18n="options.title"></h2>
+          <button class="popup-close" data-i18n-attr="aria-label:options.close.aria">&times;</button>
         </div>
         <div class="popup-content">
           <div class="row select-row">
-            <label for="drawCount">Draw</label>
-            <select id="drawCount" aria-label="Draw count">
+            <label for="drawCount" data-i18n="options.draw"></label>
+            <select id="drawCount" data-i18n-attr="aria-label:options.draw.aria">
               <option value="1">1</option>
               <option value="3" selected>3</option>
             </select>
           </div>
           <div class="row select-row">
-            <label for="redealPolicy">Redeal</label>
-            <select id="redealPolicy" aria-label="Redeal policy">
-              <option value="unlimited" selected>Unlimited</option>
+            <label for="redealPolicy" data-i18n="options.redeal"></label>
+            <select id="redealPolicy" data-i18n-attr="aria-label:options.redeal.aria">
+              <option value="unlimited" selected data-i18n="options.redeal.unlimited"></option>
               <option value="limited(1)">1</option>
               <option value="limited(3)">3</option>
-              <option value="none">None</option>
+              <option value="none" data-i18n="options.redeal.none"></option>
             </select>
           </div>
           <div class="row toggle-row">
-            <label for="leftHandMode">Left-hand</label>
+            <label for="leftHandMode" data-i18n="options.leftHand"></label>
             <input type="checkbox" id="leftHandMode" class="toggle-input" />
           </div>
           <div class="row toggle-row">
-            <label for="hints">Hints</label>
+            <label for="hints" data-i18n="options.hints"></label>
             <input type="checkbox" id="hints" class="toggle-input" checked />
           </div>
           <div class="row toggle-row">
-            <label for="autoComplete">Auto</label>
+            <label for="autoComplete" data-i18n="options.auto"></label>
             <input type="checkbox" id="autoComplete" class="toggle-input" checked />
           </div>
           <div class="row toggle-row">
-            <label for="animations">Anim</label>
+            <label for="animations" data-i18n="options.anim"></label>
             <input type="checkbox" id="animations" class="toggle-input" checked />
           </div>
           <div class="row toggle-row">
-            <label for="sound">Sound</label>
+            <label for="sound" data-i18n="options.sound"></label>
             <input type="checkbox" id="sound" class="toggle-input" />
           </div>
           <div class="row slider-row">
-            <label for="animSpeed">Speed</label>
+            <label for="animSpeed" data-i18n="options.speed"></label>
             <input type="range" id="animSpeed" min="0" max="100" value="50" />
+          </div>
+          <div class="row select-row">
+            <label for="languageSelect" data-i18n="options.language"></label>
+            <select id="languageSelect" data-i18n-attr="aria-label:options.language">
+              <option value="en" data-i18n="language.english"></option>
+              <option value="fr" data-i18n="language.french"></option>
+            </select>
           </div>
         </div>
       </div>
@@ -237,6 +244,7 @@
       integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
       crossorigin="anonymous"
     ></script>
+    <script src="js/i18n.js"></script>
     <script src="js/store.js"></script>
     <script src="js/popup.js"></script>
     <script src="js/stats.js"></script>

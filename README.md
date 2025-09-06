@@ -17,6 +17,13 @@ Klondike Solitaire implemented as a single-page web app. No backend. Offline-cap
 - Persistent settings and stats in `localStorage` with cookie fallback.
 - One HTML file, split CSS/JS, no frameworks required.
 
+## Auto-play
+
+The **Auto** button moves every safe top card from the waste and tableau to its
+matching foundation. Cards are taken from the waste first, then tableau columns
+from left to right. The routine stops when no legal moves remain or safety caps
+are reached, and the button is re-enabled after completion.
+
 ---
 
 ## Game rules (technical summary)

@@ -573,6 +573,97 @@
       return moves;
     }
 
+    // --- Auto-play helpers ---
+
+    /**
+     * Generate a compact hash of the current piles to detect cycles.
+     * Only the order of visible cards matters for auto-play termination.
+     * @param {*} st
+     * @returns {string}
+     */
+    function stateHash(st) {
+      const f = st.piles.foundations
+        .map((pile) => pile.cards.map((c) => c.id).join("."))
+        .join("|");
+      const w = st.piles.waste.cards.map((c) => c.id).join(".");
+      const t = st.piles.tableau
+        .map((pile) =>
+          pile.cards
+            .filter((c) => c.faceUp)
+            .map((c) => c.id)
+            .join("."),
+        )
+        .join("|");
+      return f + "/" + w + "/" + t;
+    }
+
+    /**
+     * Find all currently legal foundation moves in deterministic order.
+     * Waste is considered first, then tableau columns left-to-right.
+     * @param {*} st
+     * @returns {{srcPileId:string, cardIndex:number, dstPileId:string}[]}
+     */
+    function findNextFoundationMoves(st) {
+      return enumerateAutoSafeFoundationMoves(st).map((m) => ({
+        srcPileId: m.src,
+        cardIndex: m.cardIndex,
+        dstPileId: m.dst,
+      }));
+    }
+
+    const DEBUG_AUTO = !!globalThis.DEBUG_AUTO;
+    const logAuto = (...args) => {
+      if (DEBUG_AUTO) console.debug("[auto]", ...args);
+    };
+
+    let autoRunning = false;
+
+    /**
+     * Automatically move all safe cards to foundations until no moves remain.
+     * Returns a summary object with iteration and move counts.
+     */
+    async function runAutoToFixpoint() {
+      if (autoRunning || !state) return { moves: 0, iterations: 0 };
+      autoRunning = true;
+      try {
+        let iterations = 0;
+        let moves = 0;
+        const seen = new Set();
+        while (true) {
+          iterations++;
+          if (iterations > 1000) {
+            logAuto("iteration cap hit");
+            break;
+          }
+          const h = stateHash(state);
+          if (seen.has(h)) {
+            logAuto("repeat state", h);
+            break;
+          }
+          seen.add(h);
+
+          const next = findNextFoundationMoves(state);
+          logAuto("iter", iterations, "hash", h, "moves", next);
+          if (!next.length) break;
+
+          for (const mv of next) {
+            move(mv);
+            moves++;
+            if (moves > 500) {
+              logAuto("move cap hit");
+              break;
+            }
+            // Yield to the event loop so the UI can update.
+            await new Promise((r) => setTimeout(r, 0));
+          }
+          if (moves > 500) break;
+        }
+        return { moves, iterations };
+      } finally {
+        autoRunning = false;
+      }
+    }
+
     return {
       ...api,
       newGame,
@@ -592,6 +683,10 @@
       applyMove,
       isWin,
       enumerateAutoSafeFoundationMoves,
+      // auto-play helpers for tests
+      _stateHash: stateHash,
+      _findNextFoundationMoves: findNextFoundationMoves,
+      runAutoToFixpoint,
     };
   })();
 

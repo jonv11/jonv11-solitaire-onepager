@@ -7,6 +7,7 @@
 ### Fixed
 
 - Counting an in-progress game as a loss when starting a new one
+- Auto button no longer hangs; auto-play now moves safe cards to foundations deterministically and terminates
 
 ## [0.1.0] - 2025-09-03
 

@@ -5,18 +5,23 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint:js": "eslint $(git ls-files '*.js')",
+    "lint:html": "htmlhint $(git ls-files '*.html')",
+    "lint:css": "stylelint $(git ls-files '*.css')",
+    "lint": "npm run lint:js && npm run lint:html && npm run lint:css",
     "format": "prettier -w .",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --runInBand --ci"
   },
   "devDependencies": {
     "eslint": "8.57.1",
     "eslint-plugin-promise": "6.6.0",
+    "htmlhint": "^1.6.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jsdom": "^24.0.0",
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "stylelint": "^16.24.0",
+    "stylelint-config-standard": "^39.0.0"
   },
   "packageManager": "npm@10.8.2"
 }

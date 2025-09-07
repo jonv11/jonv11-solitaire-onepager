@@ -48,7 +48,7 @@ describe('Auto UI integration', () => {
 
     btn.click();
     expect(btn.disabled).toBe(true);
-    await new Promise((r) => setTimeout(r, 10));
+  await new Promise((resolve) => setTimeout(resolve, 10));
     expect(btn.disabled).toBe(false);
     expect(order).toEqual(['foundation-S', 'foundation-D', 'foundation-H']);
     const hf = st.piles.foundations.find((f) => f.suit === 'H');

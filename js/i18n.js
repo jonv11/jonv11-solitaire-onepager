@@ -80,5 +80,5 @@
     await setLanguage(currentLang);
   }
 
-  window.I18n = { init, setLanguage, t: translate, getLanguage: () => currentLang };
+  window.I18n = { init, setLanguage, t: translate, getLanguage: () => currentLang, apply };
 })();

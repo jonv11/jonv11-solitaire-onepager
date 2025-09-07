@@ -236,7 +236,7 @@ jonv11-solitaire-onepager/
 ├── .eslintrc.json
 ├── .eslintignore
 ├── .prettierrc.json
-├── .nycrc.json
+├── jest.config.cjs
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
@@ -281,6 +281,31 @@ npm test
 
 ---
 
+## Testing
+
+- Framework: Jest (single framework for all unit and integration tests)
+- Location: 	ests/
+- Naming: use *.test.js or *.spec.js
+- Environment: default Node; use jsdom explicitly in tests that touch the DOM
+- Setup: common polyfills in 	ests/setup-globals.js (auto-loaded via Jest config)
+- Coverage: 
+pm run test:coverage (outputs coverage/lcov.info)
+
+Guidelines:
+- Prefer deterministic, headless tests. Use the VM pattern to load js/*.js into a sandboxed context when not testing UI wiring.
+- Avoid 
+ode:test; use Jest�s 	est/expect API for new tests.
+- Keep browser-run ad hoc tests out of the repo; convert them to automated Jest tests when possible.
+
+Commands:
+- Run all tests: 
+pm test
+- Run a single file: 
+px jest tests/engine.test.js
+- Watch mode: 
+px jest --watch
+
+---
 ## Build and deploy
 
 No build step is required. Deploy the repository root as static files.
@@ -296,10 +321,10 @@ Upload the repository contents or point the host to the repo root.
 
 ## CI
 
-`.github/workflows/node-ci.yml` runs:
-- Install via `npm ci` (requires a committed `package-lock.json`)
-- Lint
-- Unit tests
+`.github/workflows/test.yml` runs:
+- Install via `npm install --no-audit --no-fund`
+- Run unit tests with Jest and collect coverage (`npm run test:coverage`)
+- Upload `coverage/lcov.info` as an artifact
 
 Protect `main` with required status checks and 1 review.
 
@@ -349,3 +374,4 @@ MIT. See `LICENSE`.
 ## Credits
 
 - This project follows the `jonv11` repository conventions for structure, naming, and CI.
+

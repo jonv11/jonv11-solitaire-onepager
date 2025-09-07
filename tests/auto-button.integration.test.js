@@ -1,10 +1,8 @@
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
+import { describe, test, expect } from '@jest/globals';
 import fs from 'node:fs';
 import { JSDOM } from 'jsdom';
 
 // Integration test for Auto button with sequential animations
-
 test('Auto button disables during run and updates foundations', async () => {
   const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   const dom = new JSDOM(html, { pretendToBeVisual: true });
@@ -12,6 +10,7 @@ test('Auto button disables during run and updates foundations', async () => {
   globalThis.window = window;
   globalThis.document = window.document;
   globalThis.navigator = window.navigator;
+
   const { engine } = await import('../js/engine.module.js');
   await import('../js/ui.js');
   const { UI } = globalThis;
@@ -43,13 +42,14 @@ test('Auto button disables during run and updates foundations', async () => {
   });
 
   btn.click();
-  assert.equal(btn.disabled, true);
+  expect(btn.disabled).toBe(true);
   await new Promise((r) => setTimeout(r, 10));
-  assert.equal(btn.disabled, false);
-  assert.deepEqual(order, ['foundation-S', 'foundation-D', 'foundation-H']);
+  expect(btn.disabled).toBe(false);
+  expect(order).toEqual(['foundation-S', 'foundation-D', 'foundation-H']);
   const hf = st.piles.foundations.find((f) => f.suit === 'H');
-  assert.equal(hf.cards.length, 3);
+  expect(hf.cards).toHaveLength(3);
   const cardEl = document.querySelector('#foundation-H .card:last-child');
-  assert(cardEl);
-  assert.equal(cardEl.dataset.rank, '3');
+  expect(cardEl).toBeTruthy();
+  expect(cardEl.dataset.rank).toBe('3');
 });
+

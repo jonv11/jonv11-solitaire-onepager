@@ -1,5 +1,4 @@
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
+import { describe, test, expect } from '@jest/globals';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
@@ -15,13 +14,18 @@ const { EventEmitter } = context.window;
 test('EventEmitter emits to registered listeners', () => {
   const emitter = EventEmitter();
   let payload = 0;
-  emitter.on('ping', (n) => { payload = n; });
+  emitter.on('ping', (n) => {
+    payload = n;
+  });
   emitter.emit('ping', 7);
-  assert.equal(payload, 7);
+  expect(payload).toBe(7);
 });
 
 test('EventEmitter does not throw when a listener errors', () => {
   const emitter = EventEmitter();
-  emitter.on('boom', () => { throw new Error('fail'); });
-  assert.doesNotThrow(() => emitter.emit('boom'));
+  emitter.on('boom', () => {
+    throw new Error('fail');
+  });
+  expect(() => emitter.emit('boom')).not.toThrow();
 });
+

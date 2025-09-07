@@ -1,13 +1,18 @@
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
+import { describe, test, expect } from '@jest/globals';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
 const localStub = {
   data: {},
-  getItem(k){ return this.data[k] ?? null; },
-  setItem(k,v){ this.data[k] = String(v); },
-  removeItem(k){ delete this.data[k]; }
+  getItem(k) {
+    return this.data[k] ?? null;
+  },
+  setItem(k, v) {
+    this.data[k] = String(v);
+  },
+  removeItem(k) {
+    delete this.data[k];
+  },
 };
 
 const context = { window: {}, console, localStorage: localStub };
@@ -20,15 +25,15 @@ vm.runInContext(code, context, { filename: 'js/store.js' });
 const { Store } = context.window;
 
 test('Store persists settings via localStorage', () => {
-  Store.setSettings({ a:1 });
-  assert.equal(localStub.data['solitaire.settings'], JSON.stringify({ a:1 }));
+  Store.setSettings({ a: 1 });
+  expect(localStub.data['solitaire.settings']).toBe(JSON.stringify({ a: 1 }));
   const st = Store.getSettings();
-  assert.equal(JSON.stringify(st), JSON.stringify({ a:1 }));
+  expect(JSON.stringify(st)).toBe(JSON.stringify({ a: 1 }));
 });
 
 test('Store clears saved state', () => {
-  Store.saveState({ foo:'bar' });
-  assert.ok(localStub.data['solitaire.saved']);
+  Store.saveState({ foo: 'bar' });
+  expect(localStub.data['solitaire.saved']).toBeTruthy();
   Store.clearSavedState();
-  assert.equal(localStub.data['solitaire.saved'], undefined);
+  expect(localStub.data['solitaire.saved']).toBe(undefined);
 });

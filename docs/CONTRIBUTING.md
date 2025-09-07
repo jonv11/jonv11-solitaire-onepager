@@ -30,7 +30,7 @@ Please read the following guidelines before opening an issue or submitting a pul
 3. **Lint / Test** locally before committing:
    - Ensure the game loads cleanly in at least one modern desktop browser and one mobile browser.
    - Avoid console errors/warnings.
-   - Add unit tests for all code-based parts that are testable and keep them passing (`npm test`).
+   - Add unit tests for all code-based parts that are testable and keep them passing (`npm test`). Tests use Jest and live under `tests/`.
 4. **Commit** using clear messages:
    ```
    feat: add auto-move to foundations
@@ -70,7 +70,7 @@ Please read the following guidelines before opening an issue or submitting a pul
 ## Node projects
 
 - Use `npm install` to add or update dependencies and commit the resulting `package-lock.json`.
-- Continuous Integration uses Node.js LTS 20 and runs `npm ci` for clean installs.
+- Continuous Integration uses Node.js LTS 20 and runs Jest with coverage. See `.github/workflows/test.yml`.
 - CI fails if `package.json` and `package-lock.json` drift out of sync.
 
 ---

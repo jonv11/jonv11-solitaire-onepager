@@ -19,8 +19,8 @@ jobs:
           cache: npm
       - name: Install
         run: npm install --no-audit --no-fund # install dependencies without touching lockfile
-      - name: Test with coverage
-        run: npm run test:coverage # run tests and collect coverage
+      - name: Test with coverage (Jest)
+        run: npm run test:coverage -- --ci
       - uses: actions/upload-artifact@v4
         with:
           name: coverage

@@ -11,15 +11,15 @@ Priorities: P1 critical, P2 important, P3 nice-to-have
   - Evidence: package.json defines lint script; .eslintrc.json present
 
 ## Tests and coverage
-- [x][P2][Tests] Add coverage reporting for Node tests (auto-checked on 2025-09-06)
+- [x][P2][Tests] Add coverage reporting for unit tests (auto-checked on 2025-09-07)
   - Why: measure test completeness and gaps
-  - Evidence: .nycrc.json defines coverage; test.yml uploads coverage
+  - Evidence: Jest coverage via `npm run test:coverage`; `test.yml` uploads `coverage/lcov.info`
 - [x][P3][Tests] Convert stats-test.html to automated test or remove (auto-checked on 2025-09-06)
   - Why: unused manual test increases maintenance burden
   - Evidence: stats-test.html removed from repository
-- [P2][Tests] Integrate Jest auto-play tests into CI
+- [x][P2][Tests] Integrate Jest auto-play tests into CI (auto-checked on 2025-09-07)
   - Why: ensure auto-play functionality is exercised
-  - Evidence: tests/auto.spec.js not executed in test.yml
+  - Evidence: `test.yml` runs Jest specs; `tests/auto.spec.js` executes in CI
 - [P3][Tests] Remove or port browser-run stats.test.js to Node test
   - Why: browser-only test not covered by CI
   - Evidence: js/stats.test.js is a standalone browser test
@@ -31,9 +31,9 @@ Priorities: P1 critical, P2 important, P3 nice-to-have
 - [x][P2][Docs] Add CODE_OF_CONDUCT.md for contributor expectations (auto-checked on 2025-09-06)
   - Why: set community standards
   - Evidence: CODE_OF_CONDUCT.md present
-- [P2][Docs] Update README CI section to reflect current workflows
-  - Why: README references obsolete node-ci.yml
-  - Evidence: README.md lines 272-279 mention `.github/workflows/node-ci.yml`
+- [x][P2][Docs] Update README CI section to reflect current workflows (auto-checked on 2025-09-07)
+  - Why: README referenced obsolete node-ci.yml
+  - Evidence: README.md CI section references `.github/workflows/test.yml` and Jest coverage
 
 ## CI/CD
 - [x][P2][CI] Cache npm modules in tests workflow (auto-checked on 2025-09-06)

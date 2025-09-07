@@ -6,8 +6,12 @@
 (function () {
   "use strict";
 
-  const Engine = (() => {
-    const api = EventEmitter();
+  function Engine() {
+    // Allow construction without `new` by correcting the call form.
+    if (!(this instanceof Engine)) return new Engine();
+
+    // Support both function-style and class-style emitters.
+    const api = new EventEmitter();
     let state = null;
     let undoStack = [];
     let redoStack = [];
@@ -717,7 +721,11 @@
       _findNextFoundationMoves: findNextFoundationMoves,
       runAutoToFixpoint,
     };
-  })();
+  }
 
-  window.Engine = Engine;
+  // Pre-constructed singleton used by the browser code.
+  const engine = new Engine();
+  window.engine = engine;
+  window.Engine = engine; // backward compatibility
+  window.EngineCtor = Engine;
 })();

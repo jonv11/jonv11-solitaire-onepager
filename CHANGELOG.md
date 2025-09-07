@@ -16,6 +16,7 @@
 - Auto now moves Aces to empty suit foundations and includes comprehensive foundation tests
 - Auto runner guarded against re-entrancy and infinite loops
 - Auto runner id for pile was wrongly set to 'WASTE' instead of 'waste' (same for STOCK)
+- Engine constructor now safe across ESM and browser usage; exports standardized and call-form instantiation guarded
 
 ## [0.1.0] - 2025-09-03
 

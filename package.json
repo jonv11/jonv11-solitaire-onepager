@@ -2,9 +2,8 @@
   "name": "jonv11-solitaire-onepager",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "test": "jest --runInBand",
+    "test": "jest",
     "test:auto": "jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -14,8 +13,8 @@
   "devDependencies": {
     "eslint": "8.57.1",
     "eslint-plugin-promise": "6.6.0",
-    "jsdom": "^24.0.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "@jest/globals": "^29.7.0",
     "prettier": "3.6.2"
   },

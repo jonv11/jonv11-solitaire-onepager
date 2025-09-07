@@ -697,8 +697,12 @@
       }
     }
 
-    return {
-      ...api,
+    // Augment the EventEmitter instance with the engine's public API.
+    // Using Object.assign preserves emitter methods (on, emit, etc.)
+    // which live on the prototype and are non-enumerable in Node's
+    // implementation. Spreading `api` into a new object would lose
+    // these methods and break event handling in consumers.
+    Object.assign(api, {
       newGame,
       getState,
       draw,
@@ -720,7 +724,8 @@
       _stateHash: stateHash,
       _findNextFoundationMoves: findNextFoundationMoves,
       runAutoToFixpoint,
-    };
+    });
+    return api;
   }
 
   // Pre-constructed singleton used by the browser code.

@@ -1,1 +1,9 @@
-import { describe, test, expect } from '@jest/globals';  import { Engine } from '../js/engine.module.js';  // Ensure calling Engine without `new` returns a working instance. test('Engine constructor guard', () => {   const inst = Engine();   expect(typeof inst.newGame).toBe('function');   // Should be distinct instances on each call   const inst2 = Engine();   expect(inst).not.toBe(inst2); });
+import { test, expect } from "@jest/globals";
+import { Engine } from "../js/engine.module.js";
+
+test("Engine constructor guard", () => {
+  const inst = Engine();
+  expect(typeof inst.newGame).toBe("function");
+  const inst2 = Engine();
+  expect(inst).not.toBe(inst2);
+});

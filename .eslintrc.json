@@ -3,11 +3,12 @@
   "env": { "browser": true, "es2022": true },
   "extends": ["eslint:recommended", "plugin:promise/recommended"],
   "plugins": ["promise"],
-  "parserOptions": { "ecmaVersion": "latest", "sourceType": "script" },
+  "parserOptions": { "ecmaVersion": "latest", "sourceType": "module" },
   "rules": {
     "no-unused-vars": ["error", { "varsIgnorePattern": "^", "argsIgnorePattern": "^" }],
     "no-empty": ["error", { "allowEmptyCatch": true }],
-    "no-constant-condition": ["error", { "checkLoops": false }]
+    "no-constant-condition": ["error", { "checkLoops": false }],
+    "no-redeclare": ["error", { "builtinGlobals": false }]
   },
   "globals": {
     "$": "readonly",
@@ -18,6 +19,9 @@
     "SoliStats": "readonly",
     "UI": "readonly",
     "Solver": "readonly",
-    "debugLog": "readonly"
+    "debugLog": "readonly",
+    "Popup": "readonly",
+    "I18n": "readonly",
+    "global": "readonly"
   }
 }

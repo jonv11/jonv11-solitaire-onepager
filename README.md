@@ -7,7 +7,7 @@ Klondike Solitaire implemented as a single-page web app. No backend. Offline-cap
 ## Features
 
 - Klondike rules: stock, waste, 7 tableau piles, 4 foundations.
-- Input: drag and drop or click source → destination.
+- Input: drag and drop or click source â†’ destination.
 - Auto-move to foundations on double-click or tap.
 - Draw-1 or Draw-3 modes. Optional redeal limits.
 - Undo/Redo with incremental DOM patching.
@@ -30,7 +30,7 @@ foundation moves remain and the button is re-enabled after completion.
 ## Game rules (technical summary)
 
 **Goal**  
-Move all cards to the four foundations by suit in ascending order A→K.
+Move all cards to the four foundations by suit in ascending order Aâ†’K.
 
 **Setup**  
 - 52-card deck, shuffled.  
@@ -40,11 +40,11 @@ Move all cards to the four foundations by suit in ascending order A→K.
 - Waste: face-up discard from the stock.
 
 **Moves**  
-- **Tableau building:** descending rank, alternating colors. Example: 7♠ on 8♦.  
+- **Tableau building:** descending rank, alternating colors. Example: 7â™  on 8â™¦.  
 - **Multiple-card moves:** move a face-up sequence that follows alternating-color descending order.  
 - **Empty tableau:** only a King or a sequence starting with a King can be moved to an empty tableau pile.  
-- **Foundations:** build by suit ascending A→K. Only the next rank of the same suit is legal.  
-- **Stock → Waste:** draw one or three cards depending on mode.  
+- **Foundations:** build by suit ascending Aâ†’K. Only the next rank of the same suit is legal.  
+- **Stock â†’ Waste:** draw one or three cards depending on mode.  
 - **Redeal:** when stock is empty, turn waste face-down to form a new stock as allowed by settings.
 
 **Win condition**  
@@ -57,7 +57,7 @@ All 52 cards placed on foundations.
 - **Desktop**
   - Drag a card or valid sequence onto a legal target.
   - Double-click a card to auto-move to a foundation if legal.
-  - Keyboard: `Space` draw, `U` undo, `R` redo, `H` hint, `A` auto-complete, `←/→/↑/↓` focus navigation, `Enter` move when a target is legal.
+  - Keyboard: `Space` draw, `U` undo, `R` redo, `H` hint, `A` auto-complete, `â†/â†’/â†‘/â†“` focus navigation, `Enter` move when a target is legal.
 
 - **Mobile/Tablet**
   - Drag a card or valid sequence onto a legal target.
@@ -74,7 +74,7 @@ See [docs/non-board-ui.md](docs/non-board-ui.md) for class names and programmati
 
 ## Auto-complete
 
-When a win is certain and only moves to the foundations remain, the game can finish for you. Press the **Auto** button or `A` key to trigger automatic play-out. The engine then moves every remaining card to its foundation in order—similar to "auto-finish" in classic Solitaire apps—granting any time bonus and ending the round without further input.
+When a win is certain and only moves to the foundations remain, the game can finish for you. Press the **Auto** button or `A` key to trigger automatic play-out. The engine then moves every remaining card to its foundation in orderâ€”similar to "auto-finish" in classic Solitaire appsâ€”granting any time bonus and ending the round without further input.
 
 ---
 
@@ -98,11 +98,11 @@ All settings persist between sessions.
   - +5 move from tableau to foundation  
   - +10 waste to foundation  
   - +5 tableau to tableau (uncovering counts separately)  
-  - −15 every 10 seconds idle (optional)  
+  - âˆ’15 every 10 seconds idle (optional)  
   - Bonus for time remaining when auto-complete starts
 
 - **Vegas**  
-  - Start bankroll −$52  
+  - Start bankroll âˆ’$52  
   - +$5 per card to foundation  
   - Optional cumulative score across plays
 
@@ -115,9 +115,9 @@ All values are constants in `js/engine.js` and can be adjusted.
 Uses `localStorage`. Falls back to browser cookie via a tiny jQuery helper if unavailable.
 
 **Keys**
-- `solitaire.settings` → JSON of Settings
-- `solitaire.saved` → current `GameState` for resume
-- `solitaire.stats` → wins, time, moves, streaks, vegas bankroll
+- `solitaire.settings` â†’ JSON of Settings
+- `solitaire.saved` â†’ current `GameState` for resume
+- `solitaire.stats` â†’ wins, time, moves, streaks, vegas bankroll
 
 ### Storage and Stats
 
@@ -212,37 +212,37 @@ DOM updates are incremental: compute `UndoDelta[]` per move and apply targeted p
 
 ```
 jonv11-solitaire-onepager/
-├── index.html
-├── css/
-│   └── style.css
-├── js/
-│   ├── store.js
-│   ├── model.js
-│   ├── engine.js
-│   ├── ui.js
-│   └── main.js
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── CONTRIBUTING.md
-│   └── ROADMAP.md
-├── .github/
-│   ├── workflows/
-│   │   ├── tests.yml
-│   │   └── codeql.yml
-│   └── pull_request_template.md
-├── .editorconfig
-├── .gitattributes
-├── .gitignore
-├── .eslintrc.json
-├── .eslintignore
-├── .prettierrc.json
-├── jest.config.cjs
-├── CODE_OF_CONDUCT.md
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── LICENSE
-├── CHANGELOG.md
-└── README.md
+â”œâ”€â”€ index.html
+â”œâ”€â”€ css/
+â”‚   â””â”€â”€ style.css
+â”œâ”€â”€ js/
+â”‚   â”œâ”€â”€ store.js
+â”‚   â”œâ”€â”€ model.js
+â”‚   â”œâ”€â”€ engine.js
+â”‚   â”œâ”€â”€ ui.js
+â”‚   â””â”€â”€ main.js
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ ARCHITECTURE.md
+â”‚   â”œâ”€â”€ CONTRIBUTING.md
+â”‚   â””â”€â”€ ROADMAP.md
+â”œâ”€â”€ .github/
+â”‚   â”œâ”€â”€ workflows/
+â”‚   â”‚   â”œâ”€â”€ tests.yml
+â”‚   â”‚   â””â”€â”€ codeql.yml
+â”‚   â””â”€â”€ pull_request_template.md
+â”œâ”€â”€ .editorconfig
+â”œâ”€â”€ .gitattributes
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ .eslintrc.json
+â”œâ”€â”€ .eslintignore
+â”œâ”€â”€ .prettierrc.json
+â”œâ”€â”€ jest.config.cjs
+â”œâ”€â”€ CODE_OF_CONDUCT.md
+â”œâ”€â”€ CONTRIBUTING.md
+â”œâ”€â”€ SECURITY.md
+â”œâ”€â”€ LICENSE
+# Lint JS, HTML, and CSS
+â””â”€â”€ README.md
 ```
 
 ---
@@ -250,7 +250,7 @@ jonv11-solitaire-onepager/
 ## Getting started
 
 **Requirements**  
-Any recent browser. Optional: Node.js ≥ 18 for tooling.
+Any recent browser. Optional: Node.js â‰¥ 18 for tooling.
 
 **Local run**  
 Open `index.html` directly, or use a static server:
@@ -294,7 +294,7 @@ pm run test:coverage (outputs coverage/lcov.info)
 Guidelines:
 - Prefer deterministic, headless tests. Use the VM pattern to load js/*.js into a sandboxed context when not testing UI wiring.
 - Avoid 
-ode:test; use Jest�s 	est/expect API for new tests.
+ode:test; use Jest’s 	est/expect API for new tests.
 - Keep browser-run ad hoc tests out of the repo; convert them to automated Jest tests when possible.
 
 Commands:
@@ -311,10 +311,10 @@ px jest --watch
 No build step is required. Deploy the repository root as static files.
 
 **GitHub Pages**
-1. Settings → Pages → Source: `main` → `/ (root)`.
-2. Wait for Pages to publish. The URL is shown in the Pages panel.
-
-**Any static host**  
+`.github/workflows/ci.yml` runs:
+- Install via `npm ci`
+- Lint JS, HTML, and CSS (`npm run lint`)
+- Run unit tests with Jest (`npm test`)
 Upload the repository contents or point the host to the repo root.
 
 ---

@@ -12,7 +12,6 @@ export class SimpleEmitter {
 let EmitterCtor = SimpleEmitter;
 try {
   // Works in Node ESM tests; ignored in browsers.
-  // eslint-disable-next-line n/no-unsupported-features/es-syntax
   const mod = await import('events');
   if (mod?.EventEmitter) EmitterCtor = mod.EventEmitter;
 } catch { /* fall back */ }

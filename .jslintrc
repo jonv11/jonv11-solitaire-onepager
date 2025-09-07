@@ -1,0 +1,7 @@
+{
+  "edition": "latest",
+  "browser": true,
+  "node": true,
+  "devel": true,
+  "sloppy": true
+}

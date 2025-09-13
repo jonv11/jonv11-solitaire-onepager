@@ -476,11 +476,13 @@
       return { x: ev.clientX, y: ev.clientY };
     }
 
-    // ---------- Tiny emitter to decouple if needed
-    // Double-activation helpers
+    // ---------- Double-activation helpers
     let lastTap = 0;
+    let autoMoveLock = false; // debounce guard for double-click/tap
 
     function autoMoveFromCard(el) {
+      if (autoMoveLock) return; // ignore re-entrant calls
+      autoMoveLock = true;
       const pileEl = el.closest(".pile");
       const srcPileId = pileElToId(pileEl);
       const cardIndex = Array.from(pileEl.querySelectorAll(".card")).indexOf(
@@ -488,6 +490,10 @@
       );
       // Ask engine to auto-move this card to its foundation
       Engine.autoMoveOne?.({ srcPileId, cardIndex });
+      // release lock next tick so subsequent user actions are honoured
+      setTimeout(() => {
+        autoMoveLock = false;
+      }, 0);
     }
 
     function onCardTap(e) {

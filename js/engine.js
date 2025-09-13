@@ -2,7 +2,7 @@
    Core game rules for Klondike.
    Relies on Model and Store. Emits events for UI.
 */
-/* global EventEmitter, Model */
+/* global EventEmitter, Model, assertFoundationInvariant */
 (function () {
   "use strict";
 
@@ -16,6 +16,12 @@
     let undoStack = [];
     let redoStack = [];
 
+    // Development-only logging toggle. Set to `true` when debugging.
+    const DEBUG = false;
+    function log(...args) {
+      if (DEBUG && typeof console !== "undefined") console.log(...args);
+    }
+
     // Parse a redeal policy string and return the allowed count
     // "unlimited" -> Number.MAX_SAFE_INTEGER, "none" -> 0, "limited(n)" -> n
     function parseRedeals(policy) {
@@ -26,6 +32,9 @@
     }
 
     function cloneState(st) {
+      // Use structuredClone when available for deep copies; fallback to JSON
+      // serialization otherwise. Undo/redo relies on immutability of snapshots.
+      if (typeof structuredClone === "function") return structuredClone(st);
       return JSON.parse(JSON.stringify(st));
     }
 
@@ -129,6 +138,13 @@
       return null;
     }
 
+    // Build a {C,D,H,S} -> foundation map for fast lookups
+    function foundationsBySuit() {
+      const map = {};
+      for (const f of state.piles.foundations) map[f.suit] = f;
+      return map;
+    }
+
     function canMoveCard(card, dstPile) {
       if (dstPile.kind === "foundation") {
         return Model.canDropOnFoundation(card, top(dstPile), dstPile.suit);
@@ -212,7 +228,9 @@
       // Moving cards out of a foundation costs −5 per card
       if (src.kind === "foundation") state.score.total -= 5 * cards.length;
       state.score.moves++;
-
+      if (typeof assertFoundationInvariant === "function")
+        assertFoundationInvariant(state);
+      log("MOVE", { src: src.id, dst: dst.id, count: cards.length });
       emit();
       endCheck();
     }
@@ -336,6 +354,9 @@
       state.time.elapsedMs = Date.now() - state.time.startedAt;
       emit();
       endCheck();
+      if (typeof assertFoundationInvariant === "function")
+        assertFoundationInvariant(state);
+      log("UNDO", { foundations: state.piles.foundations.map((f) => f.id) });
     }
 
     function redo() {
@@ -345,6 +366,9 @@
       state.time.elapsedMs = Date.now() - state.time.startedAt;
       emit();
       endCheck();
+      if (typeof assertFoundationInvariant === "function")
+        assertFoundationInvariant(state);
+      log("REDO", { foundations: state.piles.foundations.map((f) => f.id) });
     }
 
     function autoMoveOne({ srcPileId, cardIndex }) {
@@ -354,10 +378,19 @@
       const card = src.cards[cardIndex];
       if (!card) return;
 
-      // Try to drop onto correct foundation
-      const f = state.piles.foundations.find((x) => x.suit === card.suit);
-      const top = f.cards.length ? f.cards[f.cards.length - 1] : null;
-      if (Model.canDropOnFoundation(card, top, f.suit)) {
+      // Try to drop onto correct foundation using suit-keyed lookup
+      const f = foundationsBySuit()[card.suit];
+      const top = f && f.cards.length ? f.cards[f.cards.length - 1] : null;
+      log("AUTO", {
+        card: card.id,
+        suit: card.suit,
+        rank: card.rank,
+        targetKey: f?.id,
+        topSuit: top?.suit,
+        topRank: top?.rank,
+        src: srcPileId,
+      });
+      if (f && Model.canDropOnFoundation(card, top, f.suit)) {
         move({ srcPileId, cardIndex, dstPileId: f.id });
       }
     }

@@ -21,6 +21,7 @@
 - Auto runner id for pile was wrongly set to 'WASTE' instead of 'waste' (same for STOCK)
 - Engine constructor now safe across ESM and browser usage; exports standardized and call-form instantiation guarded
 - Engine retains EventEmitter listener methods to avoid `engine.on` errors
+- Wrong foundation auto-move on double-click
 
 ## [0.1.0] - 2025-09-03
 
